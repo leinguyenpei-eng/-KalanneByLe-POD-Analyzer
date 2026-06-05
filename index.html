@@ -319,30 +319,54 @@ textarea{resize:vertical;min-height:80px}
       <div id="mk-kw-output"></div>
     </div>
 
-    <!-- 4 nguồn PSD chính -->
+    <!-- Nguồn mockup + design tools -->
     <div class="card">
-      <div class="card-title">4 kho PSD mockup miễn phí tốt nhất</div>
+      <div class="card-title">Nguồn mockup &amp; design tools</div>
 
-      <!-- Freepik -->
+      <!-- Canva -->
       <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:600;margin-bottom:3px">🔴 Freepik — kho lớn nhất</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
-              Tìm mọi loại mockup. Lọc <strong>Free + PSD</strong> ở sidebar.<br/>
-              <span style="color:var(--amber)">⚠ Free tier: tối đa 10 file/ngày</span>
-            </div>
-            <div id="fp-kw" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
-          </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">🟦 Canva — mockup + design trong 1 tab</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+          Có sẵn mockup template (frame, device, tote, mug...) và editor ngay trong browser.<br/>
+          Kéo design vào mockup template → export PNG/JPG luôn, không cần Photopea.<br/>
+          <span style="color:var(--green-mid)">✓ Free tier dùng được, mockup cơ bản không cần Pro</span>
         </div>
-        <button class="btn-sm" id="fp-open-btn" onclick="openFreepik()" style="width:100%;text-align:center;margin-top:4px">Mở Freepik với từ khóa gợi ý ↗</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-sm" onclick="window.open('https://www.canva.com/create/mockups/','_blank')">Mockup templates ↗</button>
+          <button class="btn-sm" id="fp-open-btn" onclick="openFreepik()" style="margin-top:0">Tìm theo keyword ↗</button>
+        </div>
+        <div id="fp-kw" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px"></div>
+      </div>
+
+      <!-- Kittl -->
+      <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">🎨 Kittl — design đẹp cho POD, có mockup</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+          Platform design chuyên cho POD/Etsy sellers. Có sẵn t-shirt, poster, sticker mockup.<br/>
+          Template vintage, retro, boho — rất hợp Etsy. AI text effects xịn.<br/>
+          <span style="color:var(--green-mid)">✓ Free plan có, Pro từ $10/tháng</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-sm" onclick="window.open('https://www.kittl.com/explore','_blank')">Browse templates ↗</button>
+          <button class="btn-sm" onclick="window.open('https://www.kittl.com/feature/mockup-generator','_blank')">Mockup generator ↗</button>
+        </div>
+      </div>
+
+      <!-- Magnific (ex-Freepik) -->
+      <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">✨ Magnific — AI upscale &amp; image tools <span style="font-size:10px;font-weight:400;color:var(--text3)">(trước là Freepik)</span></div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+          Upscale design lên tới 16x, thêm texture &amp; detail bằng AI. Dùng sau khi design xong để polish trước khi upload Etsy.<br/>
+          <span style="color:var(--amber)">⚠ Không có free tier — từ $39/tháng. Dùng khi cần print quality cao.</span>
+        </div>
+        <button class="btn-sm" onclick="window.open('https://www.magnific.com/app','_blank')" style="width:100%;text-align:center">Mở Magnific ↗</button>
       </div>
 
       <!-- Unblast -->
       <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:600;margin-bottom:3px">⬛ Unblast — chất lượng cao, sang xịn</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">⬛ Unblast — PSD mockup chất lượng cao</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
-          Mockup được chọn lọc kỹ, layer PSD rõ ràng. Giao diện không quảng cáo.<br/>
+          Mockup được chọn lọc kỹ, layer PSD rõ ràng, giao diện không quảng cáo.<br/>
           <span style="color:var(--green-mid)">✓ Hoàn toàn miễn phí, không giới hạn</span>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -393,7 +417,7 @@ textarea{resize:vertical;min-height:80px}
       <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border)">
         <div style="font-size:20px;font-weight:700;color:var(--text3);min-width:28px">1</div>
         <div style="font-size:12px;line-height:1.8">
-          <strong>Tải file PSD mockup</strong> từ Freepik / Unblast / Graphic Burger về máy.<br/>
+          <strong>Tải file PSD mockup</strong> từ Canva / Unblast / Graphic Burger về máy.<br/>
           <span style="color:var(--text2)">File tải về thường là .zip — giải nén trước.</span>
         </div>
       </div>
@@ -496,7 +520,7 @@ textarea{resize:vertical;min-height:80px}
       <div class="card-title" style="color:var(--amber)">⚡ Full workflow từ design đến Etsy</div>
       <div style="font-size:12px;color:var(--amber);line-height:2">
         <strong>1.</strong> POD Analyzer → analyze design → lấy ảnh approve ≥8/10<br/>
-        <strong>2.</strong> Freepik / Unblast → tải PSD mockup phù hợp product type<br/>
+        <strong>2.</strong> Canva / Kittl / Unblast → tìm mockup phù hợp product type<br/>
         <strong>3.</strong> Photopea.com → mở PSD → chèn design vào Smart Object → export JPG<br/>
         <strong>4.</strong> Lặp lại bước 2-3 cho 2-3 mockup style khác nhau (lifestyle, flat lay, closeup)<br/>
         <strong>5.</strong> Design Tools → Etsy Listing → generate title + 13 tags + description<br/>
@@ -680,8 +704,9 @@ textarea{resize:vertical;min-height:80px}
 </div><!-- .app -->
 <script>
 /* ═══ SHARED STATE ═══ */
-const API_URL = '/api/claude';
-const _apiKey = 'managed-by-cloudflare'; // API key is kept secret in Cloudflare env vars
+const API_URL = 'https://api.anthropic.com/v1/messages';
+// API key injected at build time via GitHub Actions / environment
+const _apiKey = (typeof __API_KEY__ !== 'undefined') ? __API_KEY__ : (window.ANTHROPIC_API_KEY || '');
 
 const S = {images:[], results:[]};
 
@@ -746,7 +771,7 @@ function clearImages(){S.images=[];S.results=[];renderPreviews()}
 
 function goAnalyze() {
   if (!S.images.length) return;
-  // API key managed by Cloudflare — no check needed
+  if (!_apiKey || !_apiKey.startsWith('sk-ant-')) return alert('API key chưa được cấu hình. Kiểm tra GitHub Secrets.');
   goStep(3, document.querySelectorAll('.step-btn')[2]);
   runAnalysis();
 }
@@ -838,6 +863,9 @@ Return ONLY valid JSON, no markdown fences:
       method:'POST',
       headers:{
         'Content-Type':'application/json',
+        'x-api-key':_apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
       },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
@@ -1313,6 +1341,63 @@ function generateDesign(){
   document.getElementById('gen-content').textContent=out;
   document.getElementById('gen-output').style.display='block';
 }
+
+/* ═══ MOCKUP HELPERS ═══ */
+const MK_KEYWORDS = {
+  'wall-art':      { lifestyle: 'wall art mockup living room poster frame', flatlay: 'art print flat lay mockup', minimal: 'poster frame mockup white wall minimal', dark: 'dark moody wall art frame mockup' },
+  'journal':       { lifestyle: 'journal planner mockup desk lifestyle', flatlay: 'notebook planner flat lay mockup', minimal: 'journal mockup white background minimal', dark: 'planner mockup dark aesthetic' },
+  'sticker':       { lifestyle: 'sticker sheet mockup laptop', flatlay: 'sticker sheet flat lay mockup top view', minimal: 'sticker mockup white background', dark: 'sticker mockup dark background' },
+  'digital-device':{ lifestyle: 'iPad mockup lifestyle desk', flatlay: 'laptop mockup flat lay', minimal: 'device mockup white minimal clean', dark: 'dark iPad MacBook mockup' },
+  'svg':           { lifestyle: 'SVG clipart bundle digital download mockup', flatlay: 'digital files flat lay mockup', minimal: 'SVG bundle mockup minimal', dark: 'digital product mockup dark' },
+  'gift-tag':      { lifestyle: 'gift tag greeting card mockup styled', flatlay: 'gift tag flat lay mockup', minimal: 'greeting card mockup white', dark: 'dark moody card mockup' },
+};
+const MK_UNBLAST = {
+  'wall-art':'poster', 'journal':'book', 'sticker':'branding', 'digital-device':'device', 'svg':'branding', 'gift-tag':'stationery'
+};
+const MK_WORLD = {
+  'wall-art':'prints-posters', 'journal':'books', 'sticker':'stationery', 'digital-device':'tech', 'svg':'branding', 'gift-tag':'stationery'
+};
+
+function renderMockupKeywords() {
+  const ptype = document.getElementById('mk-ptype')?.value || 'wall-art';
+  const style = document.getElementById('mk-style')?.value || 'lifestyle';
+  const kw = MK_KEYWORDS[ptype]?.[style] || 'mockup psd free';
+  // Show keywords as chips under Canva button
+  const el = document.getElementById('fp-kw');
+  if (el) {
+    el.innerHTML = kw.split(' ').map(w =>
+      `<span style="background:var(--bg3);padding:2px 8px;border-radius:20px;font-size:11px;cursor:pointer" onclick="navigator.clipboard.writeText('${kw}')">${w}</span>`
+    ).join('');
+  }
+  // Update button targets
+  const fpBtn = document.getElementById('fp-open-btn');
+  if (fpBtn) fpBtn.onclick = () => openCanva(kw);
+  const ubBtn = document.getElementById('ub-btn');
+  if (ubBtn) ubBtn.onclick = () => openUnblast(ptype);
+  const mwBtn = document.getElementById('mw-btn');
+  if (mwBtn) mwBtn.onclick = () => openMockupWorld(ptype);
+}
+
+function openFreepik() {
+  const ptype = document.getElementById('mk-ptype')?.value || 'wall-art';
+  const style = document.getElementById('mk-style')?.value || 'lifestyle';
+  const kw = encodeURIComponent(MK_KEYWORDS[ptype]?.[style] || 'mockup psd free');
+  window.open(`https://www.canva.com/search/templates?q=${kw}`, '_blank');
+}
+function openCanva(kw) {
+  window.open(`https://www.canva.com/search/templates?q=${encodeURIComponent(kw || 'mockup')}`, '_blank');
+}
+function openUnblast(ptype) {
+  const cat = MK_UNBLAST[ptype || document.getElementById('mk-ptype')?.value] || 'mockup';
+  window.open(`https://unblast.com/?s=${cat}+mockup`, '_blank');
+}
+function openMockupWorld(ptype) {
+  const cat = MK_WORLD[ptype || document.getElementById('mk-ptype')?.value] || 'all-free-mockups';
+  window.open(`https://www.mockupworld.co/category/${cat}/`, '_blank');
+}
+
+// Init keywords on load
+document.addEventListener('DOMContentLoaded', renderMockupKeywords);
 
 // Init
 (function(){ renderHistory(); })();
