@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>KalanneByLe — POD Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAF8;--bg2:#F2F0EB;--bg3:#E8E5DE;
+  --text:#1A1A18;--text2:#6B6960;--text3:#9B9890;
+  --border:#E0DDD6;--border2:#C8C5BE;
+  --green-bg:#EAF3DE;--green:#27500A;--green-mid:#639922;
+  --amber-bg:#FAEEDA;--amber:#854F0B;--amber-mid:#BA7517;
+  --red-bg:#FCEBEB;--red:#791F1F;--red-mid:#E24B4A;
+  --blue-bg:#E6F1FB;--blue:#0C447C;--blue-mid:#378ADD;
+  --radius:10px;--radius-sm:7px;
+  --font:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono','Courier New',monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1A1A18;--bg2:#242420;--bg3:#2E2E2A;
+  --text:#F2F0EB;--text2:#9B9890;--text3:#6B6960;
+  --border:#333330;--border2:#444440;
+  --green-bg:#173404;--green:#C0DD97;--green-mid:#639922;
+  --amber-bg:#412402;--amber:#FAC775;--amber-mid:#BA7517;
+  --red-bg:#501313;--red:#F7C1C1;--red-mid:#E24B4A;
+  --blue-bg:#042C53;--blue:#B5D4F4;--blue-mid:#378ADD;
+}}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+a{color:var(--blue-mid);text-decoration:none}
+.app{max-width:780px;margin:0 auto;padding:16px}
+
+.header{text-align:center;padding:18px 0 14px}
+.header h1{font-size:19px;font-weight:600;letter-spacing:-.3px}
+.header p{font-size:12px;color:var(--text2);margin-top:3px}
+
+/* Tool nav */
+.tool-nav{display:flex;gap:0;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg2);margin-bottom:16px}
+.tool-btn{flex:1;padding:10px 4px;font-size:11px;font-weight:500;cursor:pointer;background:none;border:none;color:var(--text2);font-family:var(--font);text-align:center;border-right:0.5px solid var(--border);transition:background .15s,color .15s}
+.tool-btn:last-child{border-right:none}
+.tool-btn.active{background:var(--bg);color:var(--text);font-weight:600}
+.tool-icon{display:block;font-size:17px;margin-bottom:2px}
+.tool-panel{display:none}.tool-panel.active{display:block}
+
+/* Steps */
+.steps{display:flex;gap:0;margin-bottom:14px;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg2)}
+.step-btn{flex:1;padding:8px 3px;font-size:10px;font-weight:500;cursor:pointer;background:none;border:none;color:var(--text2);font-family:var(--font);text-align:center;border-right:0.5px solid var(--border);transition:background .15s,color .15s;letter-spacing:.02em}
+.step-btn:last-child{border-right:none}
+.step-btn.active{background:var(--bg);color:var(--text);font-weight:600}
+.step-num{display:block;font-size:14px;font-weight:600;margin-bottom:1px}
+
+/* Cards */
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);margin-bottom:10px}
+
+/* Forms */
+label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px}
+input,select,textarea{width:100%;padding:8px 10px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:var(--font);font-size:13px;outline:none;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--border2)}
+textarea{resize:vertical;min-height:80px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.field{margin-bottom:10px}
+@media(max-width:520px){.row2,.row3{grid-template-columns:1fr}}
+
+/* Buttons */
+.btn-primary{background:var(--text);color:var(--bg);border:0.5px solid var(--text);border-radius:var(--radius-sm);width:100%;padding:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:opacity .15s}
+.btn-primary:hover{opacity:.88}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-sm{padding:5px 11px;font-size:11px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text2);font-family:var(--font);cursor:pointer;transition:color .15s}
+.btn-sm:hover{color:var(--text)}
+.btn-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.btn-copy-top{float:right;font-size:11px;padding:3px 10px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text2)}
+
+/* Output */
+.out-box{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-size:12px;line-height:1.75;color:var(--text);white-space:pre-wrap;max-height:320px;overflow-y:auto;font-family:var(--mono)}
+
+/* Drop zone */
+.drop-zone{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:26px 16px;text-align:center;cursor:pointer;background:var(--bg2);position:relative;transition:background .15s,border-color .15s}
+.drop-zone.drag{background:var(--blue-bg);border-color:var(--blue-mid)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-zone-icon{font-size:30px;margin-bottom:6px;color:var(--text2)}
+.drop-zone p{font-size:13px;color:var(--text2)}
+.drop-zone small{font-size:11px;color:var(--text3)}
+
+/* Preview grid */
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px;margin-top:12px}
+.prev-item{border-radius:var(--radius-sm);overflow:hidden;border:0.5px solid var(--border);background:var(--bg2);position:relative;cursor:pointer;transition:border-color .15s}
+.prev-item img{width:100%;height:88px;object-fit:cover;display:block}
+.prev-item .prev-name{font-size:10px;padding:3px 6px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.score-pill{position:absolute;top:4px;right:4px;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px}
+.pill-green{background:var(--green-bg);color:var(--green)}
+.pill-amber{background:var(--amber-bg);color:var(--amber)}
+.pill-red{background:var(--red-bg);color:var(--red)}
+.redo-btn{position:absolute;bottom:4px;left:4px;font-size:9px;padding:2px 6px;border-radius:20px;background:var(--blue-bg);color:var(--blue);cursor:pointer;border:none;font-family:var(--font)}
+
+/* Stats */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--bg2);border-radius:var(--radius-sm);padding:9px 12px}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:2px}
+.stat-val{font-size:20px;font-weight:600}
+.stat-val.green{color:var(--green-mid)}.stat-val.amber{color:var(--amber-mid)}.stat-val.red{color:var(--red-mid)}
+@media(max-width:520px){.stat-row{grid-template-columns:repeat(2,1fr)}}
+
+/* Result cards */
+.result-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:10px}
+.result-header{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.result-img{width:68px;height:68px;object-fit:cover;border-radius:var(--radius-sm);border:0.5px solid var(--border);flex-shrink:0}
+.result-meta{flex:1;min-width:0}
+.result-score{font-size:24px;font-weight:700;line-height:1}
+.verdict-badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:4px}
+.badge-approve{background:var(--green-bg);color:var(--green)}
+.badge-revise{background:var(--amber-bg);color:var(--amber)}
+.badge-reject{background:var(--red-bg);color:var(--red)}
+.crit-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;border-bottom:0.5px solid var(--border)}
+.crit-row:last-child{border:none}
+.crit-name{min-width:130px;color:var(--text2)}
+.crit-bar{flex:1;height:4px;border-radius:2px;background:var(--bg3);overflow:hidden}
+.crit-fill{height:100%;border-radius:2px}
+.fill-green{background:var(--green-mid)}.fill-amber{background:var(--amber-mid)}.fill-red{background:var(--red-mid)}
+.crit-score{min-width:26px;text-align:right;font-weight:500;font-size:12px}
+.insight{font-size:12px;padding:8px 10px;border-radius:var(--radius-sm);margin-top:6px;line-height:1.6}
+.insight-green{background:var(--green-bg);color:var(--green)}
+.insight-amber{background:var(--amber-bg);color:var(--amber)}
+.insight-blue{background:var(--blue-bg);color:var(--blue)}
+.prompt-fix{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:10px;margin-top:8px;font-size:12px;font-family:var(--mono);line-height:1.7;color:var(--text)}
+.platform-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ptag{font-size:12px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border);background:var(--bg2);color:var(--text2)}
+.ptag.rec{background:var(--green-bg);color:var(--green);border-color:var(--green-mid)}
+.listing-section{margin-bottom:12px}
+.listing-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text2);margin-bottom:5px}
+.tag-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.etag{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg2);border:0.5px solid var(--border);color:var(--text2)}
+
+/* Loading */
+.loading{display:flex;align-items:center;gap:8px;padding:16px;color:var(--text2);font-size:13px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--text2);animation:blink 1.2s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* History */
+.hist-item{display:flex;gap:10px;align-items:center;padding:9px 10px;border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;background:var(--bg2)}
+.hist-thumb{width:40px;height:40px;object-fit:cover;border-radius:5px;flex-shrink:0;border:0.5px solid var(--border)}
+.hist-info{flex:1;min-width:0}
+.hist-name{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist-meta{font-size:11px;color:var(--text2)}
+
+/* Mockup section */
+.mockup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:10px;margin-top:10px}
+.mockup-card{border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg2)}
+.mockup-card img{width:100%;height:130px;object-fit:cover;display:block}
+.mockup-info{padding:10px 12px}
+.mockup-name{font-size:12px;font-weight:500;margin-bottom:2px}
+.mockup-desc{font-size:11px;color:var(--text2);margin-bottom:8px}
+.mockup-badge{font-size:10px;padding:1px 7px;border-radius:20px;display:inline-block;margin-bottom:6px}
+.badge-free{background:var(--green-bg);color:var(--green)}
+.badge-paid{background:var(--blue-bg);color:var(--blue)}
+.badge-tips{background:var(--amber-bg);color:var(--amber)}
+
+/* Design tool tabs */
+.dt-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.dt-tab{padding:6px 13px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:12px;cursor:pointer;background:var(--bg);color:var(--text2);font-family:var(--font)}
+.dt-tab.active{background:var(--bg2);color:var(--text);font-weight:500}
+.dt-section{display:none}.dt-section.active{display:block}
+.color-preview{width:26px;height:26px;border-radius:6px;border:0.5px solid var(--border);display:inline-block;vertical-align:middle;margin-left:6px}
+.prompt-block{margin-bottom:10px;padding:10px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm)}
+.prompt-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.prompt-text{font-size:12px;line-height:1.6;color:var(--text);font-family:var(--mono)}
+
+/* Mockup canvas */
+.mockup-canvas-wrap{position:relative;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff;margin-bottom:10px}
+.mockup-canvas-wrap canvas{display:block;width:100%;max-width:500px;margin:0 auto}
+.mockup-drop-target{background:var(--bg2);border:1.5px dashed var(--border2);border-radius:var(--radius);min-height:260px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;cursor:pointer;position:relative;overflow:hidden;transition:background .15s}
+.mockup-drop-target.has-img{border-style:solid;border-color:var(--border)}
+.mockup-drop-target input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.mockup-drop-target img{max-width:100%;max-height:360px;object-fit:contain;border-radius:6px}
+.mockup-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+@media(max-width:520px){.mockup-controls{grid-template-columns:1fr}}
+
+.section{display:none}.section.active{display:block}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <h1>✦ KalanneByLe — POD Studio</h1>
+  <p>POD Analyzer · Mockup Generator · Design Tools · Etsy Listing</p>
+</div>
+
+<!-- Tool nav -->
+<div class="tool-nav">
+  <button class="tool-btn active" onclick="switchTool('analyzer',this)"><span class="tool-icon">🔍</span>POD Analyzer</button>
+  <button class="tool-btn" onclick="switchTool('mockup',this)"><span class="tool-icon">🖼️</span>Mockup</button>
+  <button class="tool-btn" onclick="switchTool('design',this)"><span class="tool-icon">🎨</span>Design Tools</button>
+  <button class="tool-btn" onclick="switchTool('history',this)"><span class="tool-icon">📁</span>Lịch sử</button>
+</div>
+
+<!-- ══ TOOL A: POD ANALYZER ══ -->
+<div id="tool-analyzer" class="tool-panel active">
+  <div class="steps">
+    <button class="step-btn active" onclick="goStep(1,this)"><span class="step-num">01</span>Setup</button>
+    <button class="step-btn" onclick="goStep(2,this)"><span class="step-num">02</span>Upload</button>
+    <button class="step-btn" onclick="goStep(3,this)"><span class="step-num">03</span>Analyze</button>
+    <button class="step-btn" onclick="goStep(4,this)"><span class="step-num">04</span>Export</button>
+  </div>
+
+  <!-- Step 1: Setup -->
+  <div id="s1" class="section active">
+    <div class="card">
+      <div class="card-title">Thông tin sản phẩm</div>
+      <div class="row2">
+        <div class="field"><label>Loại sản phẩm</label>
+          <select id="p-type">
+            <option value="Wall Art PNG">Wall Art / Art Print PNG</option>
+            <option value="Journal / Planner PDF">Journal / Planner PDF</option>
+            <option value="Coloring Page PDF">Coloring Page PDF</option>
+            <option value="Sticker Sheet PNG">Sticker Sheet PNG</option>
+            <option value="SVG Cut File">SVG Cut File</option>
+            <option value="Clip Art Bundle PNG">Clip Art Bundle PNG</option>
+            <option value="Ebook / Guide PDF">Ebook / Guide PDF</option>
+            <option value="Poster PNG">Poster PNG</option>
+            <option value="Gift Tag PNG">Gift Tag PNG</option>
+          </select>
+        </div>
+        <div class="field"><label>Niche / Theme</label><input id="p-niche" type="text" placeholder="VD: cottagecore, dark academia, retro..."/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Platform chính</label>
+          <select id="p-platform">
+            <option>Etsy</option><option>Redbubble</option><option>Gumroad</option>
+            <option>Creative Fabrica</option><option>Society6</option><option>TeePublic</option><option>Ko-fi</option>
+          </select>
+        </div>
+        <div class="field"><label>Giá bán gợi ý</label>
+          <select id="p-price">
+            <option>$2-4</option><option value="$4-8" selected>$4-8 (sweet spot)</option>
+            <option>$8-15</option><option>$15-25</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="goStep(2,document.querySelectorAll('.step-btn')[1])">Tiếp → Upload ảnh →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Upload -->
+  <div id="s2" class="section">
+    <div class="card">
+      <div class="card-title">Upload ảnh design</div>
+      <div class="drop-zone" id="dz" ondragover="onDragOver(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)">
+        <input type="file" accept="image/*" multiple onchange="handleFiles(this.files)"/>
+        <div class="drop-zone-icon">⬆</div>
+        <p>Kéo thả ảnh vào đây hoặc click để chọn</p>
+        <small>PNG / JPG từ Leonardo, Firefly, Midjourney, Canva... Nhiều ảnh cùng lúc được</small>
+      </div>
+      <div id="pg" class="preview-grid"></div>
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+        <button class="btn-sm" onclick="clearImages()">✕ Xóa tất cả</button>
+        <span id="img-counter" style="font-size:12px;color:var(--text2)"></span>
+      </div>
+      <button class="btn-primary" id="btn-go" style="margin-top:12px;display:none" onclick="goAnalyze()">✦ Analyze <span id="img-cnt">0</span> ảnh →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Analyze -->
+  <div id="s3" class="section">
+    <div id="analyze-area"><div style="padding:20px;color:var(--text2);font-size:13px;text-align:center">Upload ảnh ở bước 2 trước nhé.</div></div>
+    <div id="reanalyze-btn" style="display:none;margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn-sm" onclick="goStep(2,document.querySelectorAll('.step-btn')[1])">← Thêm ảnh</button>
+      <button class="btn-sm" onclick="reanalyzeAll()">↺ Re-analyze tất cả</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Export -->
+  <div id="s4" class="section">
+    <div id="export-area"><div style="padding:20px;color:var(--text2);font-size:13px;text-align:center">Analyze ảnh xong sẽ có kết quả ở đây.</div></div>
+  </div>
+</div>
+
+<!-- ══ TOOL B: MOCKUP ══ -->
+<div id="tool-mockup" class="tool-panel">
+  <div class="dt-tabs">
+    <button class="dt-tab active" onclick="switchDtTab('mk-find',this)">Tìm PSD Mockup</button>
+    <button class="dt-tab" onclick="switchDtTab('mk-howto',this)">Cách chèn design</button>
+    <button class="dt-tab" onclick="switchDtTab('mk-etsy',this)">Etsy Specs</button>
+    <button class="dt-tab" onclick="switchDtTab('mk-canvas-tab',this)">Canvas Mockup</button>
+  </div>
+
+  <!-- Tab 1: Tìm mockup theo product type -->
+  <div id="mk-find" class="dt-section active">
+
+    <!-- Smart search generator -->
+    <div class="card">
+      <div class="card-title">Gợi ý từ khóa tìm mockup theo sản phẩm</div>
+      <div class="row2" style="margin-bottom:10px">
+        <div>
+          <label>Product type</label>
+          <select id="mk-ptype" onchange="renderMockupKeywords()">
+            <option value="wall-art">Wall Art / Poster / Art Print</option>
+            <option value="journal">Journal / Planner / Notebook</option>
+            <option value="sticker">Sticker Sheet</option>
+            <option value="digital-device">Template / Ebook / Digital file</option>
+            <option value="svg">SVG / Clipart bundle</option>
+            <option value="gift-tag">Gift Tag / Greeting Card</option>
+          </select>
+        </div>
+        <div>
+          <label>Phong cách</label>
+          <select id="mk-style" onchange="renderMockupKeywords()">
+            <option value="lifestyle">Lifestyle (phòng có decor)</option>
+            <option value="flatlay">Flat lay (nhìn từ trên xuống)</option>
+            <option value="minimal">Minimal (nền trắng/kem)</option>
+            <option value="dark">Dark / Moody</option>
+          </select>
+        </div>
+      </div>
+      <div id="mk-kw-output"></div>
+    </div>
+
+    <!-- 4 nguồn PSD chính -->
+    <div class="card">
+      <div class="card-title">4 kho PSD mockup miễn phí tốt nhất</div>
+
+      <!-- Freepik -->
+      <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:3px">🔴 Freepik — kho lớn nhất</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+              Tìm mọi loại mockup. Lọc <strong>Free + PSD</strong> ở sidebar.<br/>
+              <span style="color:var(--amber)">⚠ Free tier: tối đa 10 file/ngày</span>
+            </div>
+            <div id="fp-kw" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
+          </div>
+        </div>
+        <button class="btn-sm" id="fp-open-btn" onclick="openFreepik()" style="width:100%;text-align:center;margin-top:4px">Mở Freepik với từ khóa gợi ý ↗</button>
+      </div>
+
+      <!-- Unblast -->
+      <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">⬛ Unblast — chất lượng cao, sang xịn</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+          Mockup được chọn lọc kỹ, layer PSD rõ ràng. Giao diện không quảng cáo.<br/>
+          <span style="color:var(--green-mid)">✓ Hoàn toàn miễn phí, không giới hạn</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-sm" onclick="window.open('https://unblast.com/mockups/','_blank')">Browse tất cả ↗</button>
+          <button class="btn-sm" id="ub-btn" onclick="openUnblast()">Tìm theo product type ↗</button>
+        </div>
+      </div>
+
+      <!-- Graphic Burger -->
+      <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">🍔 Graphic Burger — nghệ thuật, có chiều sâu</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+          Số lượng ít hơn nhưng chất. Hợp cho thiệp, màn hình điện thoại/máy tính, ebook cover.<br/>
+          <span style="color:var(--green-mid)">✓ Miễn phí 100%</span>
+        </div>
+        <button class="btn-sm" onclick="window.open('https://graphicburger.com/tag/mockup/','_blank')" style="width:100%;text-align:center">Mở Graphic Burger ↗</button>
+      </div>
+
+      <!-- Mockup World -->
+      <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">🌍 Mockup World — tổng hợp từ khắp nơi</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+          Danh bạ tổng hợp mockup PSD free từ nhiều nguồn. Có category rõ ràng.<br/>
+          <span style="color:var(--green-mid)">✓ Miễn phí 100%</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-sm" id="mw-btn" onclick="openMockupWorld()">Tìm theo product type ↗</button>
+          <button class="btn-sm" onclick="window.open('https://www.mockupworld.co/all-free-mockups/','_blank')">Browse tất cả ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sau khi tải PSD xong -->
+    <div class="card" style="background:var(--amber-bg);border-color:var(--amber-mid)">
+      <div class="card-title" style="color:var(--amber)">Tải PSD về rồi → làm gì tiếp?</div>
+      <div style="font-size:12px;color:var(--amber);line-height:1.8">
+        Dùng <strong>Photopea.com</strong> (miễn phí, không cài) để mở PSD và chèn design vào — xem tab <strong>"Cách chèn design"</strong> để có hướng dẫn từng bước.
+      </div>
+      <button class="btn-sm" style="margin-top:8px" onclick="switchDtTab('mk-howto',document.querySelectorAll('#tool-mockup .dt-tab')[1])">Xem hướng dẫn →</button>
+    </div>
+  </div>
+
+  <!-- Tab 2: Hướng dẫn Photopea -->
+  <div id="mk-howto" class="dt-section">
+    <div class="card">
+      <div class="card-title">Workflow: PSD mockup → ảnh Etsy hoàn chỉnh</div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border)">
+        <div style="font-size:20px;font-weight:700;color:var(--text3);min-width:28px">1</div>
+        <div style="font-size:12px;line-height:1.8">
+          <strong>Tải file PSD mockup</strong> từ Freepik / Unblast / Graphic Burger về máy.<br/>
+          <span style="color:var(--text2)">File tải về thường là .zip — giải nén trước.</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border)">
+        <div style="font-size:20px;font-weight:700;color:var(--text3);min-width:28px">2</div>
+        <div style="font-size:12px;line-height:1.8">
+          <strong>Mở Photopea.com</strong> trên browser → <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">File → Open</code> → chọn file PSD vừa tải.
+          <br/><button class="btn-sm" style="margin-top:6px" onclick="window.open('https://www.photopea.com/','_blank')">Mở Photopea ↗</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border)">
+        <div style="font-size:20px;font-weight:700;color:var(--text3);min-width:28px">3</div>
+        <div style="font-size:12px;line-height:1.8">
+          <strong>Tìm Smart Object layer</strong> ở bảng Layers bên phải — thường tên là <em>"Your Design Here"</em>, <em>"Place Design"</em>, hoặc có icon hình vuông nhỏ góc dưới.<br/>
+          <span style="color:var(--text2)">Nếu không thấy panel Layers: menu <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">Window → Layers</code></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border)">
+        <div style="font-size:20px;font-weight:700;color:var(--text3);min-width:28px">4</div>
+        <div style="font-size:12px;line-height:1.8">
+          <strong>Double-click vào layer Smart Object</strong> → một tab mới mở ra (đây là "canvas con").<br/>
+          Kéo file design của bạn (PNG/JPG từ Leonardo, Firefly...) thả vào tab này → resize cho vừa → <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">Ctrl+S</code> để lưu.
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border)">
+        <div style="font-size:20px;font-weight:700;color:var(--text3);min-width:28px">5</div>
+        <div style="font-size:12px;line-height:1.8">
+          <strong>Quay lại tab chính</strong> — design của bạn đã được chèn vào mockup với đầy đủ shadow, texture, ánh sáng.
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0">
+        <div style="font-size:20px;font-weight:700;color:var(--text3);min-width:28px">6</div>
+        <div style="font-size:12px;line-height:1.8">
+          <strong>Export:</strong> <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">File → Export As → JPG</code> → chọn quality 90-95% → Save.<br/>
+          <span style="color:var(--amber)">⚠ Export JPG (không phải PNG) — Etsy load nhanh hơn, file nhỏ hơn.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--green-bg);border-color:var(--green-mid)">
+      <div class="card-title" style="color:var(--green)">💡 Tips chọn mockup PSD tốt</div>
+      <div style="font-size:12px;color:var(--green);line-height:1.9">
+        • Ưu tiên file có chữ <strong>"Smart Object"</strong> hoặc <strong>"Editable"</strong> trong tên — chèn design chỉ mất 30 giây<br/>
+        • Tránh mockup quá nhiều text/branding của tác giả — mất thời gian xóa<br/>
+        • Resolution PSD nên từ <strong>3000px trở lên</strong> — khi export JPG cho Etsy vẫn đủ sharp<br/>
+        • Chụp / screenshot preview mockup trên trang tải về trước — xem có hợp niche không rồi mới tải
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+      <div class="card-title" style="color:var(--blue)">🎯 Từ khóa tìm kiếm theo product type</div>
+      <div style="font-size:12px;color:var(--blue);line-height:2">
+        <strong>Wall Art / Poster:</strong> <code style="background:var(--bg);padding:1px 5px;border-radius:3px">frame mockup living room</code> · <code style="background:var(--bg);padding:1px 5px;border-radius:3px">interior poster mockup</code><br/>
+        <strong>Journal / Planner:</strong> <code style="background:var(--bg);padding:1px 5px;border-radius:3px">notebook mockup flatlay</code> · <code style="background:var(--bg);padding:1px 5px;border-radius:3px">planner mockup desk</code><br/>
+        <strong>Sticker:</strong> <code style="background:var(--bg);padding:1px 5px;border-radius:3px">sticker mockup top view</code> · <code style="background:var(--bg);padding:1px 5px;border-radius:3px">sticker sheet laptop mockup</code><br/>
+        <strong>Ebook / Template:</strong> <code style="background:var(--bg);padding:1px 5px;border-radius:3px">iPad mockup</code> · <code style="background:var(--bg);padding:1px 5px;border-radius:3px">laptop screen mockup</code> · <code style="background:var(--bg);padding:1px 5px;border-radius:3px">iPhone mockup</code><br/>
+        <strong>Gift Tag / Card:</strong> <code style="background:var(--bg);padding:1px 5px;border-radius:3px">greeting card mockup</code> · <code style="background:var(--bg);padding:1px 5px;border-radius:3px">gift tag mockup flatlay</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Etsy specs -->
+  <div id="mk-etsy" class="dt-section">
+    <div class="card" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+      <div class="card-title" style="color:var(--blue)">📐 Etsy listing photo specs</div>
+      <div style="font-size:12px;color:var(--blue);line-height:2">
+        • <strong>Kích thước tối thiểu:</strong> 2000px cạnh ngắn nhất<br/>
+        • <strong>Ratio tối ưu:</strong> 4:3 hoặc 5:4 — Etsy hiển thị đẹp nhất trên grid<br/>
+        • <strong>Format upload:</strong> JPG — file nhỏ hơn PNG, load nhanh hơn<br/>
+        • <strong>Không watermark</strong> trên listing photos — Etsy ToS không cho phép<br/>
+        • <strong>Số ảnh:</strong> 5-10 ảnh/listing — tối ưu conversion
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🗂️ Checklist 5 ảnh cần có cho 1 listing</div>
+      <div style="font-size:12px;line-height:1">
+        <div style="padding:9px 0;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:18px;min-width:26px">📸</span>
+          <div><strong>Ảnh 1 — Hero mockup:</strong> Design trong khung đẹp, lifestyle background (phòng ngủ, bàn làm việc...). Đây là ảnh quyết định click-through rate.</div>
+        </div>
+        <div style="padding:9px 0;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:18px;min-width:26px">🔍</span>
+          <div><strong>Ảnh 2 — Closeup:</strong> Crop gần vào phần detail đẹp nhất — texture, nét chữ, màu sắc.</div>
+        </div>
+        <div style="padding:9px 0;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:18px;min-width:26px">📦</span>
+          <div><strong>Ảnh 3 — "What you get":</strong> Screenshot / preview các trang/file trong bundle. Quan trọng với digital products — khách cần biết họ nhận được gì.</div>
+        </div>
+        <div style="padding:9px 0;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:18px;min-width:26px">📐</span>
+          <div><strong>Ảnh 4 — Size reference:</strong> Design đặt cạnh vật quen (cốc cà phê, bàn tay, thước) để khách hình dung kích thước khi in.</div>
+        </div>
+        <div style="padding:9px 0;display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:18px;min-width:26px">🎁</span>
+          <div><strong>Ảnh 5 — Flat lay / Lifestyle:</strong> Sản phẩm được in ra, đặt trên bàn với cây cảnh / cốc cà phê / sổ tay — tạo cảm giác "muốn sở hữu".</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background:var(--amber-bg);border-color:var(--amber-mid)">
+      <div class="card-title" style="color:var(--amber)">⚡ Full workflow từ design đến Etsy</div>
+      <div style="font-size:12px;color:var(--amber);line-height:2">
+        <strong>1.</strong> POD Analyzer → analyze design → lấy ảnh approve ≥8/10<br/>
+        <strong>2.</strong> Freepik / Unblast → tải PSD mockup phù hợp product type<br/>
+        <strong>3.</strong> Photopea.com → mở PSD → chèn design vào Smart Object → export JPG<br/>
+        <strong>4.</strong> Lặp lại bước 2-3 cho 2-3 mockup style khác nhau (lifestyle, flat lay, closeup)<br/>
+        <strong>5.</strong> Design Tools → Etsy Listing → generate title + 13 tags + description<br/>
+        <strong>6.</strong> etsy.com/sell → upload 5+ mockup JPG + file digital → Publish
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Canvas Mockup -->
+  <div id="mk-canvas-tab" class="dt-section">
+    <div class="card" style="background:var(--amber-bg);border-color:var(--amber-mid)">
+      <div style="font-size:12px;color:var(--amber);line-height:1.7">
+        ⚡ <strong>Preview nhanh</strong> — không cần tải PSD, không cần Photopea. Chèn design vào khung, export JPG để test layout.<br/>
+        <span style="color:var(--text2)">Để có mockup đẹp như Smartmockups, dùng tab <strong>Tìm PSD Mockup</strong> + Photopea.</span>
+      </div>
+    </div>
+
+    <!-- Approved designs shortcut -->
+    <div id="mk-approved-section" style="display:none">
+      <div class="card">
+        <div class="card-title" style="color:var(--green)">✓ Designs đã approved — click để load</div>
+        <div id="mk-approved-list" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Upload design của bạn</div>
+      <div id="mk-drop" class="drop-zone" style="position:relative;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer"
+        ondragover="mkDragOver(event)" ondragleave="mkDragLeave()" ondrop="mkDrop(event)" onclick="this.querySelector('input')?.click()">
+        <input type="file" accept="image/*" style="display:none" onchange="mkLoadDesign(this.files[0])"/>
+        <span style="font-size:28px;color:var(--text3)">⬆</span>
+        <span style="font-size:13px;color:var(--text2)">Kéo thả hoặc click để chọn design</span>
+        <span style="font-size:11px;color:var(--text3)">PNG / JPG</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tùy chỉnh khung</div>
+      <div class="row2">
+        <div>
+          <label>Loại khung</label>
+          <select id="mk-frame" onchange="updateMockupPreview()">
+            <option value="wall">🖼 Wood frame (wall art)</option>
+            <option value="white-frame">⬜ White frame (minimal)</option>
+            <option value="floating">🌅 Floating (no frame)</option>
+            <option value="mockup-desk">🖥 Desk flat lay</option>
+            <option value="digital">📱 Digital device</option>
+          </select>
+        </div>
+        <div>
+          <label>Màu nền</label>
+          <select id="mk-bg" onchange="updateMockupPreview()">
+            <option value="#F5F0EB">☕ Warm cream</option>
+            <option value="#FFFFFF">⬜ White</option>
+            <option value="#F8F8F8">🩶 Light grey</option>
+            <option value="#1A1A1A">⬛ Dark</option>
+            <option value="#E8F0E8">🌿 Sage green</option>
+            <option value="#F0E8F0">🪻 Lavender</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2" style="margin-top:8px">
+        <div>
+          <label>Scale design: <span id="mk-scale-val">70</span>%</label>
+          <input type="range" id="mk-scale" min="20" max="95" value="70" oninput="document.getElementById('mk-scale-val').textContent=this.value;updateMockupPreview()"/>
+        </div>
+        <div>
+          <label>Offset X: <span id="mk-ox-val">0</span>px</label>
+          <input type="range" id="mk-ox" min="-200" max="200" value="0" oninput="document.getElementById('mk-ox-val').textContent=this.value;updateMockupPreview()"/>
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <label>Offset Y: <span id="mk-oy-val">0</span>px</label>
+        <input type="range" id="mk-oy" min="-200" max="200" value="0" oninput="document.getElementById('mk-oy-val').textContent=this.value;updateMockupPreview()"/>
+      </div>
+    </div>
+
+    <div id="mk-canvas-wrap" style="display:none;margin-top:4px">
+      <canvas id="mk-canvas" style="display:block;width:100%;border-radius:var(--radius-sm)"></canvas>
+      <div class="card" style="margin-top:8px">
+        <div class="card-title">Export</div>
+        <div class="row2">
+          <div>
+            <label>Kích thước</label>
+            <select id="mk-size">
+              <option value="2000">2000×2000 (Etsy listing)</option>
+              <option value="3000">3000×3000 (Print-ready)</option>
+              <option value="1000">1000×1000 (Preview nhanh)</option>
+            </select>
+          </div>
+          <div>
+            <label>Format</label>
+            <select id="mk-format">
+              <option value="image/jpeg">JPG (Etsy recommended)</option>
+              <option value="image/png">PNG (transparent)</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="btn-sm" onclick="exportMockup()">⬇ Download mockup</button>
+          <button class="btn-sm" onclick="sendMockupToHistory()">📌 Lưu vào history</button>
+        </div>
+        <div id="mk-export-msg" style="display:none;font-size:11px;color:var(--green);margin-top:6px">✓ Đã lưu vào history!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOOL C: DESIGN TOOLS ══ -->
+<div id="tool-design" class="tool-panel">
+  <div class="dt-tabs">
+    <button class="dt-tab active" onclick="switchDtTab('dt-aiprompter',this)">AI Prompts</button>
+    <button class="dt-tab" onclick="switchDtTab('dt-etsy',this)">Etsy Listing</button>
+    <button class="dt-tab" onclick="switchDtTab('dt-palette',this)">Color Palette</button>
+    <button class="dt-tab" onclick="switchDtTab('dt-brief',this)">Design Brief</button>
+  </div>
+
+  <div id="dt-aiprompter" class="dt-section active">
+    <div class="card">
+      <div class="card-title">Generate AI Prompts</div>
+      <div class="row2">
+        <div><label>Mô tả design</label><input type="text" id="prompt-desc" placeholder="VD: cottagecore mushroom coloring page..."/></div>
+        <div><label>AI tool</label>
+          <select id="ai-tool">
+            <option value="all">Tất cả tools</option>
+            <option value="firefly">Adobe Firefly (free)</option>
+            <option value="midjourney">Midjourney / Leonardo</option>
+            <option value="figma">Figma layout</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label>Style</label>
+          <select id="prompt-style">
+            <option>flat design illustration</option><option>line art coloring page</option><option>watercolor painting</option>
+            <option>minimalist vector</option><option>vintage retro poster</option><option>botanical illustration</option>
+            <option>kids cartoon illustration</option><option>abstract art print</option>
+          </select>
+        </div>
+        <div><label>Ratio</label>
+          <select id="prompt-size">
+            <option value="1:1">Square 1:1</option><option value="3:4">Portrait 3:4 (A4)</option>
+            <option value="4:3">Landscape 4:3</option><option value="2:3">Portrait 2:3 (art print)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="generatePrompts()">✦ Generate AI Prompts →</button>
+    </div>
+    <div id="prompts-output" style="display:none">
+      <div class="card"><button class="btn-copy-top" onclick="copyAllPrompts()">⎘ Copy all</button>
+        <div class="card-title">AI Prompts</div><div id="prompts-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="dt-etsy" class="dt-section">
+    <div class="card">
+      <div class="card-title">Generate Etsy Listing</div>
+      <div class="row2">
+        <div><label>Tên sản phẩm</label><input type="text" id="etsy-product" placeholder="VD: Father's Day Journal Printable PDF..."/></div>
+        <div><label>Category</label>
+          <select id="etsy-cat">
+            <option>Digital Downloads > Printables</option><option>Digital Downloads > Clip Art</option>
+            <option>Digital Downloads > Patterns</option><option>Art & Collectibles > Prints</option><option>Craft Supplies > SVG Files</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label>Giá bán ($)</label><input type="text" id="etsy-price" placeholder="4.99"/></div>
+        <div><label>Keywords chính</label><input type="text" id="etsy-keywords" placeholder="fathers day, printable, instant download..."/></div>
+      </div>
+      <button class="btn-primary" onclick="generateEtsy()">✦ Generate Title + Tags + Description →</button>
+    </div>
+    <div id="etsy-output" style="display:none">
+      <div class="card"><button class="btn-copy-top" onclick="copyEl('etsy-content')">⎘ Copy</button>
+        <div class="card-title">Etsy Listing</div><div class="out-box" id="etsy-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="dt-palette" class="dt-section">
+    <div class="card">
+      <div class="card-title">Color Palette Generator</div>
+      <div class="row2">
+        <div><label>Vibe / mood</label>
+          <select id="pal-vibe">
+            <option>Analog Revival / journaling (cream + dark ink)</option><option>Cottagecore (sage + warm brown)</option>
+            <option>Dark academia (deep navy + gold)</option><option>Minimal Scandinavian (white + charcoal)</option>
+            <option>Boho warm (terracotta + sand)</option><option>Retro 70s (mustard + burnt orange)</option>
+            <option>Fresh spring (mint + soft pink)</option><option>Halloween (black + orange + purple)</option>
+            <option>Christmas (deep red + forest green + gold)</option>
+          </select>
+        </div>
+        <div><label>Product type</label>
+          <select id="pal-product">
+            <option>Wall art / art print</option><option>Journal / planner</option><option>Sticker sheet</option>
+            <option>Coloring page</option><option>SVG / clip art</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="generatePalette()">✦ Generate Palette →</button>
+    </div>
+    <div id="palette-output" style="display:none"><div class="card" id="palette-content"></div></div>
+  </div>
+
+  <div id="dt-brief" class="dt-section">
+    <div class="card">
+      <div class="card-title">Design Brief</div>
+      <div class="row2">
+        <div><label>Product type</label>
+          <select id="product-type">
+            <option value="wall-art">Wall Art / Art Print PNG</option>
+            <option value="journal">Journal / Planner PDF</option>
+            <option value="coloring">Coloring Page PDF</option>
+            <option value="sticker">Sticker Sheet PNG</option>
+            <option value="svg">SVG Cut File</option>
+            <option value="clipart">Clip Art Bundle PNG</option>
+            <option value="ebook">Ebook / Guide PDF</option>
+          </select>
+        </div>
+        <div><label>Niche / Theme</label><input type="text" id="niche" placeholder="cottagecore, dark academia..."/></div>
+      </div>
+      <div class="row3">
+        <div><label>Vibe</label>
+          <select id="vibe">
+            <option>Minimal & clean</option><option>Cozy & warm</option><option>Dark & moody</option>
+            <option>Retro & vintage</option><option>Botanical & nature</option><option>Bold & graphic</option><option>Playful & kids</option>
+          </select>
+        </div>
+        <div><label>Buyer</label>
+          <select id="buyer">
+            <option>Gen Z women US</option><option>Millennial women US</option><option>Parents / families</option>
+            <option>Kids / teachers</option><option>Crafters / DIY</option><option>Journaling aesthetic</option>
+          </select>
+        </div>
+        <div><label>Price</label>
+          <select id="price">
+            <option>$2-4 (impulse)</option><option>$4-8 (sweet spot)</option><option>$8-15 (bundle)</option><option>$15-25 (premium)</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label>Màu sắc (hex tùy chọn)</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="text" id="color1" placeholder="#FAF7F2" style="width:115px" oninput="previewColor('prev1',this.value)"/>
+          <span class="color-preview" id="prev1"></span>
+          <input type="text" id="color2" placeholder="#2C1810" style="width:115px" oninput="previewColor('prev2',this.value)"/>
+          <span class="color-preview" id="prev2"></span>
+          <input type="text" id="color3" placeholder="#D4573B" style="width:115px" oninput="previewColor('prev3',this.value)"/>
+          <span class="color-preview" id="prev3"></span>
+        </div>
+      </div>
+      <div style="margin-bottom:10px"><label>Yêu cầu thêm (tùy chọn)</label>
+        <textarea id="extra" placeholder="VD: cần 5 trang, có lined pages, dùng cho kids age 5-8..."></textarea>
+      </div>
+      <button class="btn-primary" onclick="generateDesign()">✦ Generate Design Brief →</button>
+    </div>
+    <div id="gen-output" style="display:none">
+      <div class="card"><button class="btn-copy-top" onclick="copyEl('gen-content')">⎘ Copy</button>
+        <div class="card-title">Design Brief</div><div class="out-box" id="gen-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOOL D: HISTORY ══ -->
+<div id="tool-history" class="tool-panel">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card-title" style="margin:0">Lịch sử Analyze</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-sm" onclick="exportCSV()">⬇ CSV</button>
+        <button class="btn-sm" onclick="clearHistory()" style="color:var(--red)">✕ Xóa hết</button>
+      </div>
+    </div>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+</div><!-- .app -->
+<script>
+/* ═══ SHARED STATE ═══ */
+const API_URL = 'https://api.anthropic.com/v1/messages';
+// API key injected at build time via GitHub Actions / environment
+const _apiKey = (typeof __API_KEY__ !== 'undefined') ? __API_KEY__ : (window.ANTHROPIC_API_KEY || '');
+
+const S = {images:[], results:[]};
+
+/* ═══ NAVIGATION ═══ */
+function switchTool(id, btn) {
+  document.querySelectorAll('.tool-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tool-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='history') renderHistory();
+  if(id==='mockup') renderApprovedSection();
+}
+
+function switchDtTab(id,btn){
+  const parent = btn.closest('.tool-panel') || document;
+  parent.querySelectorAll('.dt-section').forEach(s=>s.classList.remove('active'));
+  parent.querySelectorAll('.dt-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function goStep(n, btn) {
+  document.querySelectorAll('#tool-analyzer .section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  btn.classList.add('active');
+}
+
+function copyEl(id) {
+  const el = document.getElementById(id);
+  if(el) navigator.clipboard.writeText(el.textContent||el.innerText);
+}
+
+/* ═══ STEP 2: UPLOAD ═══ */
+function onDragOver(e){e.preventDefault();document.getElementById('dz').classList.add('drag')}
+function onDragLeave(){document.getElementById('dz').classList.remove('drag')}
+function onDrop(e){e.preventDefault();onDragLeave();handleFiles(e.dataTransfer.files)}
+
+function handleFiles(files) {
+  for (const f of files) {
+    if (!f.type.startsWith('image/')) continue;
+    const reader = new FileReader();
+    reader.onload = e => { S.images.push({src:e.target.result,name:f.name}); renderPreviews(); };
+    reader.readAsDataURL(f);
+  }
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('pg');
+  grid.innerHTML = S.images.map((img,i) => `
+    <div class="prev-item" id="pi-${i}">
+      <img src="${img.src}" alt="design ${i+1}"/>
+      <div class="prev-name">${img.name.length>16?img.name.slice(0,14)+'...':img.name}</div>
+    </div>`).join('');
+  const n = S.images.length;
+  document.getElementById('img-counter').textContent = n ? `${n} ảnh đã chọn` : '';
+  document.getElementById('btn-go').style.display = n ? 'block' : 'none';
+  document.getElementById('img-cnt').textContent = n;
+}
+
+function clearImages(){S.images=[];S.results=[];renderPreviews()}
+
+function goAnalyze() {
+  if (!S.images.length) return;
+  if (!_apiKey || !_apiKey.startsWith('sk-ant-')) return alert('API key chưa được cấu hình. Kiểm tra GitHub Secrets.');
+  goStep(3, document.querySelectorAll('.step-btn')[2]);
+  runAnalysis();
+}
+
+/* ═══ STEP 3: ANALYZE ═══ */
+async function runAnalysis() {
+  const area = document.getElementById('analyze-area');
+  const niche = document.getElementById('p-niche').value || 'aesthetic digital';
+  const type = document.getElementById('p-type').value;
+  const platform = document.getElementById('p-platform').value;
+  const priceRange = document.getElementById('p-price').value;
+
+  S.results = [];
+  for (let i = 0; i < S.images.length; i++) {
+    area.innerHTML = `<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Đang phân tích ảnh ${i+1}/${S.images.length}...</span></div>`;
+    const r = await analyzeOne(S.images[i], niche, type, platform, priceRange);
+    S.results.push(r);
+  }
+  renderResults(niche, type);
+  buildExport();
+  saveToHistory(niche, type);
+  renderApprovedSection();
+  document.getElementById('reanalyze-btn').style.display = 'flex';
+}
+
+async function reanalyzeAll(){
+  if(!S.images.length) return alert('Không có ảnh nào.');
+  goStep(3, document.querySelectorAll('.step-btn')[2]);
+  await runAnalysis();
+}
+
+async function reanalyzeOne(idx) {
+  const area = document.getElementById('analyze-area');
+  const niche = document.getElementById('p-niche').value || 'aesthetic digital';
+  const type = document.getElementById('p-type').value;
+  const platform = document.getElementById('p-platform').value;
+  const priceRange = document.getElementById('p-price').value;
+  const rc = document.getElementById('rc-'+idx);
+  if(rc) rc.innerHTML = `<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Re-analyzing ảnh ${idx+1}...</span></div>`;
+  const r = await analyzeOne(S.images[idx], niche, type, platform, priceRange);
+  S.results[idx] = r;
+  if(rc) rc.outerHTML = renderResultCard(r, idx);
+  updateStats();
+  buildExport();
+  saveToHistory(niche, type);
+}
+
+function updateStats(){
+  const approved=S.results.filter(r=>r.overall>=8&&!r.error).length;
+  const revise=S.results.filter(r=>r.overall>=6&&r.overall<8&&!r.error).length;
+  const reject=S.results.filter(r=>(r.overall<6||r.error)).length;
+  const statEl=document.getElementById('stats-row');
+  if(statEl){statEl.innerHTML=`
+    <div class="stat"><div class="stat-label">Tổng</div><div class="stat-val">${S.results.length}</div></div>
+    <div class="stat"><div class="stat-label">✓ Approve</div><div class="stat-val green">${approved}</div></div>
+    <div class="stat"><div class="stat-label">⚠ Revise</div><div class="stat-val amber">${revise}</div></div>
+    <div class="stat"><div class="stat-label">✕ Reject</div><div class="stat-val red">${reject}</div></div>`;}
+}
+
+async function analyzeOne(img, niche, type, platform, priceRange) {
+  try {
+    const base64 = img.src.split(',')[1];
+    const mime = img.src.split(';')[0].split(':')[1];
+    const prompt = `You are an expert POD and Etsy digital product analyst. Analyze this design for:
+- Niche: "${niche}"
+- Product type: "${type}"
+- Platform: "${platform}"
+- Price range: ${priceRange}
+
+Score each criterion 1-10 (be honest and strict — 10 is rare):
+1. Visual quality & resolution clarity
+2. Trend fit for "${niche}" on ${platform} 2025
+3. Color palette & aesthetic appeal
+4. Composition & layout balance
+5. Commercial viability & buyer appeal
+
+Also provide:
+- 2-3 specific strengths as one string
+- If overall score < 8: what to fix (1-2 sentences) + revised AI prompt to regenerate better
+- Best platforms for this design
+- SEO-optimized Etsy title (max 140 chars)
+- 13 Etsy tags (each max 20 chars)
+- Suggested specific price USD
+
+Return ONLY valid JSON, no markdown fences:
+{"overall":8,"verdict":"APPROVE","criteria":[{"name":"Visual quality","score":8},{"name":"Trend fit","score":7},{"name":"Color palette","score":9},{"name":"Composition","score":8},{"name":"Commercial viability","score":7}],"strengths":"Clean minimal aesthetic; Strong contrast; On-trend for journaling niche","fix_needed":"","fix_prompt":"","platforms":["Etsy","Redbubble"],"platform_notes":"Best for Etsy digital download","etsy_title":"Cottagecore Wall Art Print | Floral Aesthetic | Instant Download PNG","tags":"cottagecore art,wall art print,floral print,instant download,printable art,boho decor,digital download,aesthetic print,bedroom decor,gallery wall,nature art,botanical print,home decor gift","price":"$4.99","seo_keywords":["cottagecore","wall art printable","botanical aesthetic"]}`;
+
+    const res = await fetch(API_URL, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':_apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1200,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mime,data:base64}},
+          {type:'text',text:prompt}
+        ]}]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const txt = (data.content||[]).map(c=>c.text||'').join('');
+    const clean = txt.replace(/```json|```/g,'').trim();
+    return {...JSON.parse(clean), img};
+  } catch(e) {
+    return {overall:0,error:true,errMsg:e.message,img,verdict:'ERROR',criteria:[],strengths:'',fix_needed:'Lỗi: '+e.message,fix_prompt:'',platforms:[],etsy_title:'',tags:'',price:'',seo_keywords:[]};
+  }
+}
+
+function renderResults(niche, type) {
+  const area = document.getElementById('analyze-area');
+  if (!S.results.length) return;
+  const approved = S.results.filter(r=>r.overall>=8&&!r.error).length;
+  const revise = S.results.filter(r=>r.overall>=6&&r.overall<8&&!r.error).length;
+  const reject = S.results.filter(r=>(r.overall<6||r.error)).length;
+
+  S.results.forEach((r,i)=>{
+    const el = document.getElementById('pi-'+i);
+    if(el){
+      const cls=r.overall>=8?'pill-green':r.overall>=6?'pill-amber':'pill-red';
+      const pill=document.createElement('div');
+      pill.className='score-pill '+cls;
+      pill.textContent=r.error?'ERR':r.overall+'/10';
+      el.appendChild(pill);
+    }
+  });
+
+  area.innerHTML = `
+  <div class="stat-row" id="stats-row">
+    <div class="stat"><div class="stat-label">Tổng</div><div class="stat-val">${S.results.length}</div></div>
+    <div class="stat"><div class="stat-label">✓ Approve</div><div class="stat-val green">${approved}</div></div>
+    <div class="stat"><div class="stat-label">⚠ Revise</div><div class="stat-val amber">${revise}</div></div>
+    <div class="stat"><div class="stat-label">✕ Reject</div><div class="stat-val red">${reject}</div></div>
+  </div>
+  ${S.results.map((r,i)=>renderResultCard(r,i)).join('')}
+  <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn-primary" style="flex:1" onclick="goStep(4,document.querySelectorAll('.step-btn')[3])">Tiếp → Export listing →</button>
+    <button class="btn-sm" onclick="switchTool('mockup',document.querySelectorAll('.tool-btn')[1])">→ Tạo Mockup</button>
+  </div>`;
+}
+
+function renderResultCard(r, i) {
+  if (r.error) return `<div class="result-card" id="rc-${i}"><div style="color:var(--red);font-size:12px">❌ Ảnh ${i+1}: ${r.fix_needed||'Không analyze được'}</div><div style="font-size:11px;color:var(--text3);margin-top:4px">Kiểm tra kết nối và thử lại.</div><button class="btn-sm" style="margin-top:8px" onclick="reanalyzeOne(${i})">↺ Re-analyze ảnh này</button></div>`;
+  const sc=r.overall;
+  const vClass=sc>=8?'badge-approve':sc>=6?'badge-revise':'badge-reject';
+  const vText=sc>=8?'✓ APPROVE':sc>=6?'⚠ REVISE':'✕ REJECT';
+  const critHTML=(r.criteria||[]).map(c=>{
+    const pct=(c.score/10)*100;
+    const fCls=c.score>=8?'fill-green':c.score>=6?'fill-amber':'fill-red';
+    return `<div class="crit-row"><span class="crit-name">${c.name}</span><div class="crit-bar"><div class="crit-fill ${fCls}" style="width:${pct}%"></div></div><span class="crit-score">${c.score}</span></div>`;
+  }).join('');
+  const fixHTML=r.fix_needed?`<div class="insight insight-amber" style="margin-top:8px"><strong>Cần sửa:</strong> ${r.fix_needed}</div>${r.fix_prompt?`<div class="prompt-fix" id="fp-${i}">${r.fix_prompt}</div><button class="btn-sm" style="margin-top:4px" onclick="copyEl('fp-${i}')">⎘ Copy fix prompt</button>`:''}` :'';
+  const platformHTML=r.platforms?.length?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Upload lên</div><div class="platform-list">${r.platforms.map(p=>`<span class="ptag rec">${p}</span>`).join('')}</div>${r.platform_notes?`<div style="font-size:11px;color:var(--text2);margin-top:4px">${r.platform_notes}</div>`:''}</div>`:'';
+  const seoHTML=r.seo_keywords?.length?`<div class="insight insight-blue" style="margin-top:8px;font-size:11px"><strong>SEO:</strong> ${r.seo_keywords.join(' · ')}</div>`:'';
+  return `<div class="result-card" id="rc-${i}">
+    <div class="result-header">
+      <img src="${r.img.src}" class="result-img" alt="design"/>
+      <div class="result-meta">
+        <div class="result-score" style="color:${sc>=8?'var(--green-mid)':sc>=6?'var(--amber-mid)':'var(--red-mid)'}">${sc}/10</div>
+        <div class="verdict-badge ${vClass}">${vText}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:5px">${r.img.name.length>22?r.img.name.slice(0,20)+'...':r.img.name}</div>
+        ${r.price?`<div style="font-size:12px;font-weight:600;color:var(--green-mid);margin-top:2px">${r.price}</div>`:''}
+      </div>
+    </div>
+    ${r.strengths?`<div class="insight insight-green">${r.strengths}</div>`:''}
+    <div style="margin-top:10px">${critHTML}</div>
+    ${fixHTML}${platformHTML}${seoHTML}
+    ${r.etsy_title?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Etsy title</div><div style="font-size:12px;background:var(--bg2);padding:8px;border-radius:var(--radius-sm);font-family:var(--mono)" id="et-${i}">${r.etsy_title}</div><div class="btn-row"><button class="btn-sm" onclick="copyEl('et-${i}')">⎘ Copy title</button><button class="btn-sm" onclick="reanalyzeOne(${i})">↺ Re-analyze ảnh này</button></div></div>`:''}
+  </div>`;
+}
+
+/* ═══ STEP 4: EXPORT ═══ */
+function buildExport() {
+  const area = document.getElementById('export-area');
+  const approved = S.results.filter(r=>r.overall>=8&&!r.error);
+  const niche = document.getElementById('p-niche').value||'';
+  const type = document.getElementById('p-type').value||'Digital Product';
+  const platform = document.getElementById('p-platform').value||'Etsy';
+  const price = document.getElementById('p-price').value||'$4.99';
+
+  if (!approved.length) {
+    area.innerHTML = `<div style="padding:20px;font-size:13px;color:var(--text2);text-align:center">Chưa có ảnh nào đạt ≥8/10.<br/>Chỉnh theo gợi ý ở bước 3 rồi re-analyze nhé.</div>`;
+    return;
+  }
+  const best = approved[0];
+  const allTags = [...new Set(approved.flatMap(r=>(r.tags||'').split(',').map(t=>t.trim()).filter(Boolean)))].slice(0,13);
+  const title = best.etsy_title||`${niche} ${type} | Instant Download | Digital Printable`;
+  const etsyDesc = `Instant digital download — ready in minutes!\n\n✨ WHAT YOU GET:\n• ${approved.length} high-quality design${approved.length>1?'s':''} (${type})\n• Print-ready files, commercial use included\n• Instant download after purchase\n\n🖨️ HOW TO USE:\n1. Buy → download link sent to your email instantly\n2. Open in any PDF viewer or photo editor\n3. Print at home or upload to your POD platform\n\n💛 PERFECT FOR:\n• ${niche} lovers · Gift giving · Home decor\n• Journals, planners, scrapbooking\n\n📋 FILE INFO:\n• Format: ${type.includes('PDF')?'PDF (high-res, print-ready)':type.includes('SVG')?'SVG + PNG':'PNG (transparent / 300dpi)'}\n• Suggested price: ${price}\n\nQuestions? Message me — I reply within 24h 💛`;
+
+  window._allTags = allTags;
+  area.innerHTML = `
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="btn-sm" id="tab-etsy" style="font-weight:600;color:var(--text)" onclick="showExTab('etsy','upload')">Etsy listing</button>
+    <button class="btn-sm" id="tab-upload" onclick="showExTab('upload','etsy')">Upload checklist</button>
+    <button class="btn-sm" onclick="exportCSV()" style="margin-left:auto">⬇ Export CSV</button>
+  </div>
+  <div id="export-etsy">
+    <div class="listing-section">
+      <div class="listing-label">Title (${title.length}/140)</div>
+      <div class="out-box" id="ex-title" style="min-height:auto;padding:10px">${title}</div>
+      <div class="btn-row"><button class="btn-sm" onclick="copyEl('ex-title')">⎘ Copy title</button></div>
+    </div>
+    <div class="listing-section">
+      <div class="listing-label">Tags (${allTags.length}/13)</div>
+      <div class="tag-list">${allTags.map(t=>`<span class="etag">${t}</span>`).join('')}</div>
+      <div class="btn-row" style="margin-top:8px"><button class="btn-sm" onclick="copyTags()">⎘ Copy tags</button></div>
+    </div>
+    <div class="listing-section">
+      <div class="listing-label">Description</div>
+      <div class="out-box" id="ex-desc">${etsyDesc}</div>
+      <div class="btn-row"><button class="btn-sm" onclick="copyEl('ex-desc')">⎘ Copy description</button></div>
+    </div>
+    <a href="https://www.etsy.com/sell" target="_blank" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:12px;padding:10px">Mở Etsy Seller ↗</a>
+  </div>
+  <div id="export-upload" style="display:none">
+    <div class="out-box" id="ex-guide">📍 ETSY — Upload checklist\n━━━━━━━━━━━━━━━━━━━━━\n1. etsy.com/sell → Shop Manager → Listings → Add listing\n2. Photos: upload mockup JPG (min 2000px) — tạo ở tab Mockup\n3. Digital files: upload ZIP / PDF / PNG\n4. Title: copy từ tab Etsy listing\n5. Category: Digital Downloads > Printables\n6. Tags: paste 13 tags\n7. Price: ${price}\n8. Tick "Instant digital download"\n9. Publish ✓</div>
+    <div class="btn-row" style="margin-top:8px"><button class="btn-sm" onclick="copyEl('ex-guide')">⎘ Copy checklist</button></div>
+  </div>
+  <div class="card" style="margin-top:12px;background:var(--green-bg)">
+    <div style="font-size:12px;color:var(--green);line-height:1.7">
+      <strong>${approved.length} design đã approved ≥8/10</strong> — sẵn sàng upload.<br/>
+      ${S.results.filter(r=>r.overall>=6&&r.overall<8&&!r.error).length>0?`⚠ ${S.results.filter(r=>r.overall>=6&&r.overall<8&&!r.error).length} design cần chỉnh — xem gợi ý ở bước 3.`:''}
+    </div>
+  </div>`;
+}
+
+function showExTab(show, hide) {
+  document.getElementById('export-'+show).style.display='block';
+  document.getElementById('export-'+hide).style.display='none';
+  document.getElementById('tab-'+show).style.fontWeight='600';
+  document.getElementById('tab-'+hide).style.fontWeight='400';
+}
+function copyTags(){if(window._allTags)navigator.clipboard.writeText(window._allTags.join(', '))}
+
+/* ═══ MOCKUP CANVAS ═══ */
+let _mkDesign = null;
+let _mkCanvas = null;
+let _mkCtx = null;
+
+function mkDragOver(e){e.preventDefault();document.getElementById('mk-drop').style.borderColor='var(--blue-mid)'}
+function mkDragLeave(){document.getElementById('mk-drop').style.borderColor=''}
+function mkDrop(e){e.preventDefault();mkDragLeave();if(e.dataTransfer.files[0])mkLoadDesign(e.dataTransfer.files[0]);}
+
+function mkLoadDesign(file) {
+  if(!file||!file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      _mkDesign = img;
+      const drop = document.getElementById('mk-drop');
+      drop.innerHTML = `<img src="${e.target.result}" style="max-width:100%;max-height:260px;object-fit:contain;border-radius:6px"/>
+        <button onclick="clearMkDesign(event)" style="position:absolute;top:8px;right:8px;background:var(--bg);border:0.5px solid var(--border);border-radius:20px;padding:2px 8px;font-size:11px;cursor:pointer;color:var(--text2)">✕ đổi</button>`;
+      drop.classList.add('has-img');
+      setupMockupCanvas();
+      document.getElementById('mk-canvas-wrap').style.display='block';
+      redrawMockup();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearMkDesign(e){
+  e.stopPropagation();
+  _mkDesign=null;
+  const drop=document.getElementById('mk-drop');
+  drop.classList.remove('has-img');
+  drop.innerHTML=`<input type="file" accept="image/*" onchange="mkLoadDesign(this.files[0])"/><span style="font-size:28px;color:var(--text3)">⬆</span><span style="font-size:13px;color:var(--text2)">Kéo thả hoặc click để chọn design</span><span style="font-size:11px;color:var(--text3)">PNG / JPG</span>`;
+  document.getElementById('mk-canvas-wrap').style.display='none';
+}
+
+function setupMockupCanvas(){
+  _mkCanvas = document.getElementById('mk-canvas');
+  _mkCtx = _mkCanvas.getContext('2d');
+  _mkCanvas.width = 1000;
+  _mkCanvas.height = 1000;
+}
+
+function redrawMockup(){
+  if(!_mkCanvas||!_mkDesign) return;
+  const ctx = _mkCtx;
+  const W = _mkCanvas.width, H = _mkCanvas.height;
+  const frame = document.getElementById('mk-frame').value;
+  const bg = document.getElementById('mk-bg').value;
+  const scale = parseFloat(document.getElementById('mk-scale').value)/100;
+  const ox = parseInt(document.getElementById('mk-ox').value);
+  const oy = parseInt(document.getElementById('mk-oy').value);
+
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+
+  // Subtle texture overlay
+  ctx.fillStyle = 'rgba(0,0,0,0.015)';
+  for(let y=0;y<H;y+=4){ctx.fillRect(0,y,W,2);}
+
+  const cx = W/2 + ox, cy = H/2 + oy;
+  const dw = Math.min(_mkDesign.width, W) * scale;
+  const dh = (_mkDesign.height/_mkDesign.width) * dw;
+  const dx = cx - dw/2, dy = cy - dh/2;
+
+  if(frame==='wall'||frame==='white-frame'){
+    const fc = frame==='wall'?'#8B6347':'#FFFFFF';
+    const fw = frame==='wall'?18:14;
+    const matW = 28, shadow=18;
+    // Shadow
+    ctx.fillStyle='rgba(0,0,0,0.18)';
+    ctx.beginPath();ctx.roundRect(dx-matW-fw+shadow,dy-matW-fw+shadow,dw+2*(matW+fw),dh+2*(matW+fw),4);ctx.fill();
+    // Frame
+    ctx.fillStyle=fc;
+    ctx.beginPath();ctx.roundRect(dx-matW-fw,dy-matW-fw,dw+2*(matW+fw),dh+2*(matW+fw),4);ctx.fill();
+    // Mat
+    ctx.fillStyle=frame==='wall'?'#FAF7F2':'#F8F8F6';
+    ctx.beginPath();ctx.roundRect(dx-matW,dy-matW,dw+2*matW,dh+2*matW,2);ctx.fill();
+    // Design
+    ctx.drawImage(_mkDesign,dx,dy,dw,dh);
+    // Frame gloss
+    ctx.fillStyle='rgba(255,255,255,0.08)';
+    ctx.fillRect(dx-matW-fw,dy-matW-fw,(dw+2*(matW+fw))/2,dh+2*(matW+fw));
+  } else if(frame==='floating'){
+    ctx.fillStyle='rgba(0,0,0,0.14)';
+    ctx.beginPath();ctx.roundRect(dx+12,dy+12,dw,dh,6);ctx.fill();
+    ctx.drawImage(_mkDesign,dx,dy,dw,dh);
+  } else if(frame==='mockup-desk'){
+    // Desk surface
+    ctx.fillStyle='rgba(0,0,0,0.06)';
+    ctx.fillRect(0,H*0.55,W,H*0.45);
+    // Slight perspective
+    ctx.save();
+    ctx.transform(1,0.05,0,0.92,0,cy*0.08);
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    ctx.beginPath();ctx.roundRect(dx+8,dy+8,dw,dh,4);ctx.fill();
+    ctx.drawImage(_mkDesign,dx,dy,dw,dh);
+    ctx.restore();
+  } else if(frame==='digital'){
+    const bw=dw+60,bh=dh+80,bx=dx-30,by=dy-50;
+    ctx.fillStyle='#1A1A1A';
+    ctx.beginPath();ctx.roundRect(bx,by,bw,bh,16);ctx.fill();
+    ctx.fillStyle='#2C2C2C';
+    ctx.beginPath();ctx.roundRect(bx+4,by+4,bw-8,bh-8,13);ctx.fill();
+    ctx.drawImage(_mkDesign,dx,dy,dw,dh);
+    ctx.fillStyle='rgba(255,255,255,0.04)';
+    ctx.beginPath();ctx.roundRect(bx,by,bw,bh/3,16);ctx.fill();
+  }
+}
+
+function updateMockupPreview(){redrawMockup()}
+
+function exportMockup(){
+  if(!_mkCanvas||!_mkDesign) return alert('Load design trước nhé!');
+  // Re-draw at target resolution
+  const size = parseInt(document.getElementById('mk-size').value);
+  const format = document.getElementById('mk-format').value;
+  const offscreen = document.createElement('canvas');
+  offscreen.width = size; offscreen.height = size;
+  const ctx2 = offscreen.getContext('2d');
+  // Scale the current canvas
+  ctx2.drawImage(_mkCanvas, 0, 0, size, size);
+  const ext = format==='image/jpeg'?'jpg':'png';
+  const link = document.createElement('a');
+  link.download = `mockup-${Date.now()}.${ext}`;
+  link.href = offscreen.toDataURL(format, 0.92);
+  link.click();
+}
+
+function sendMockupToHistory(){
+  if(!_mkCanvas) return;
+  const thumb = _mkCanvas.toDataURL('image/jpeg',0.7);
+  const hist = JSON.parse(localStorage.getItem('kbl_mockup_history')||'[]');
+  hist.unshift({id:Date.now(),date:new Date().toLocaleDateString('vi-VN'),thumb,frame:document.getElementById('mk-frame').value});
+  localStorage.setItem('kbl_mockup_history',JSON.stringify(hist.slice(0,20)));
+  document.getElementById('mk-export-msg').style.display='block';
+  setTimeout(()=>{document.getElementById('mk-export-msg').style.display='none';},2000);
+}
+
+function renderApprovedSection(){
+  const approved = S.results.filter(r=>r.overall>=8&&!r.error);
+  const sec = document.getElementById('mk-approved-section');
+  if(!sec) return;
+  if(!approved.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('mk-approved-list').innerHTML = approved.map((r,i)=>`
+    <div style="cursor:pointer;text-align:center" onclick="loadApprovedDesign('${r.img.src.replace(/'/g,"\\'")}')">
+      <img src="${r.img.src}" style="width:60px;height:60px;object-fit:cover;border-radius:var(--radius-sm);border:0.5px solid var(--blue-mid);display:block"/>
+      <div style="font-size:10px;color:var(--blue);margin-top:3px">${r.overall}/10 ✓</div>
+    </div>`).join('');
+}
+
+function loadApprovedDesign(src){
+  const img = new Image();
+  img.onload = ()=>{
+    _mkDesign = img;
+    const drop = document.getElementById('mk-drop');
+    drop.innerHTML = `<img src="${src}" style="max-width:100%;max-height:260px;object-fit:contain;border-radius:6px"/>
+      <button onclick="clearMkDesign(event)" style="position:absolute;top:8px;right:8px;background:var(--bg);border:0.5px solid var(--border);border-radius:20px;padding:2px 8px;font-size:11px;cursor:pointer;color:var(--text2)">✕ đổi</button>`;
+    drop.classList.add('has-img');
+    setupMockupCanvas();
+    document.getElementById('mk-canvas-wrap').style.display='block';
+    redrawMockup();
+    switchDtTab('mk-canvas', document.querySelectorAll('#tool-mockup .dt-tab')[0]);
+  };
+  img.src = src;
+}
+
+/* ═══ HISTORY ═══ */
+function saveToHistory(niche, type) {
+  if (!S.results.length) return;
+  const approved = S.results.filter(r=>r.overall>=8&&!r.error);
+  const hist = JSON.parse(localStorage.getItem('kbl_history')||'[]');
+  const allTags = [...new Set(S.results.filter(r=>!r.error).flatMap(r=>(r.tags||'').split(',').map(t=>t.trim()).filter(Boolean)))].slice(0,13);
+  const bestTitle = approved[0]?.etsy_title||'';
+  hist.unshift({
+    id: Date.now(),
+    date: new Date().toLocaleDateString('vi-VN'),
+    niche, type,
+    total: S.results.length,
+    approved: approved.length,
+    thumb: approved.length ? approved[0].img.src : S.results[0].img.src,
+    tags: allTags,
+    title: bestTitle,
+    results: S.results.map(r=>({
+      name: r.img?.name||'',
+      overall: r.overall,
+      verdict: r.verdict,
+      price: r.price||'',
+      etsy_title: r.etsy_title||'',
+      tags: r.tags||'',
+      strengths: r.strengths||''
+    }))
+  });
+  localStorage.setItem('kbl_history', JSON.stringify(hist.slice(0,50)));
+}
+
+function renderHistory() {
+  const hist = JSON.parse(localStorage.getItem('kbl_history')||'[]');
+  const el = document.getElementById('history-list');
+  if (!el) return;
+  if (!hist.length) { el.innerHTML='<div style="font-size:13px;color:var(--text2);text-align:center;padding:20px">Chưa có lịch sử nào.</div>'; return; }
+  el.innerHTML = hist.map(h=>`
+    <div class="hist-item">
+      <img src="${h.thumb}" class="hist-thumb" alt="thumb"/>
+      <div class="hist-info">
+        <div class="hist-name">${h.niche||'—'} — ${h.type||'—'}</div>
+        <div class="hist-meta">${h.date} · ${h.approved}/${h.total} approved</div>
+        ${h.title?`<div style="font-size:11px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.title}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+        ${h.tags?.length?`<button class="btn-sm" onclick="navigator.clipboard.writeText('${h.tags.join(', ').replace(/'/g,"\\'")}')">⎘ Tags</button>`:''}
+        ${h.title?`<button class="btn-sm" onclick="navigator.clipboard.writeText('${h.title.replace(/'/g,"\\'")}')">⎘ Title</button>`:''}
+        <button class="btn-sm" style="color:var(--red)" onclick="deleteHistoryItem(${h.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function deleteHistoryItem(id){
+  let hist = JSON.parse(localStorage.getItem('kbl_history')||'[]');
+  hist = hist.filter(h=>h.id!==id);
+  localStorage.setItem('kbl_history',JSON.stringify(hist));
+  renderHistory();
+}
+
+function clearHistory() {
+  if(confirm('Xóa toàn bộ lịch sử?')){localStorage.removeItem('kbl_history');renderHistory();}
+}
+
+function exportCSV(){
+  const hist = JSON.parse(localStorage.getItem('kbl_history')||'[]');
+  if(!hist.length) return alert('Chưa có lịch sử nào để export.');
+  let rows=[['Date','Niche','Type','Total','Approved','Best Title','Tags','Price']];
+  for(const h of hist){
+    if(h.results?.length){
+      for(const r of h.results){
+        rows.push([h.date,h.niche,h.type,h.total,h.approved,`"${(r.etsy_title||'').replace(/"/g,'""')}"`,`"${(r.tags||'').replace(/"/g,'""')}"`,r.price||'']);
+      }
+    } else {
+      rows.push([h.date,h.niche,h.type,h.total,h.approved,`"${(h.title||'').replace(/"/g,'""')}"`,`"${(h.tags||[]).join(', ').replace(/"/g,'""')}"`,'' ]);
+    }
+  }
+  const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`kbl-history-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+/* ═══ DESIGN TOOLS ═══ */
+function previewColor(id,val){const el=document.getElementById(id);if(val&&/^#[0-9A-Fa-f]{3,6}$/.test(val))el.style.background=val}
+
+function generatePrompts(){
+  const desc=document.getElementById('prompt-desc').value||'aesthetic digital design';
+  const tool=document.getElementById('ai-tool').value,style=document.getElementById('prompt-style').value,size=document.getElementById('prompt-size').value;
+  const ff=`Adobe Firefly (firefly.adobe.com):\n"${desc}, ${style}, clean composition, professional quality, isolated white background, commercial license safe, high resolution"`;
+  const mj=`Midjourney / Leonardo AI:\n/imagine ${desc}, ${style}, soft natural lighting, clean composition, high detail, commercial use --ar ${size} --v 6 --style raw`;
+  const fig=`Figma Community search:\n"${desc.split(' ').slice(0,3).join(' ')} template"\n→ community.figma.com → filter: Free`;
+  const cg=`ChatGPT / Claude (text content):\n"Generate 10-20 items for a ${desc} digital product. Target: US Gen Z/millennial. Tone: warm, minimal. Format as simple list."`;
+  let c='';
+  if(tool==='all'||tool==='firefly') c+=`<div class="prompt-block"><div class="prompt-label">🔥 Adobe Firefly — free, commercial safe</div><div class="prompt-text" id="pt-ff">${ff}</div><button class="btn-sm" style="margin-top:6px" onclick="navigator.clipboard.writeText(document.getElementById('pt-ff').textContent)">⎘ Copy</button></div>`;
+  if(tool==='all'||tool==='midjourney') c+=`<div class="prompt-block"><div class="prompt-label">⚡ Midjourney / Leonardo AI</div><div class="prompt-text" id="pt-mj">${mj}</div><button class="btn-sm" style="margin-top:6px" onclick="navigator.clipboard.writeText(document.getElementById('pt-mj').textContent)">⎘ Copy</button></div>`;
+  if(tool==='all'||tool==='figma') c+=`<div class="prompt-block"><div class="prompt-label">◈ Figma (layout free)</div><div class="prompt-text" id="pt-fig">${fig}</div><button class="btn-sm" style="margin-top:6px" onclick="navigator.clipboard.writeText(document.getElementById('pt-fig').textContent)">⎘ Copy</button></div>`;
+  if(tool==='all') c+=`<div class="prompt-block"><div class="prompt-label">💬 ChatGPT / Claude</div><div class="prompt-text" id="pt-cg">${cg}</div><button class="btn-sm" style="margin-top:6px" onclick="navigator.clipboard.writeText(document.getElementById('pt-cg').textContent)">⎘ Copy</button></div>`;
+  document.getElementById('prompts-content').innerHTML=c;
+  document.getElementById('prompts-output').style.display='block';
+}
+function copyAllPrompts(){
+  const txts=[...document.querySelectorAll('.prompt-text')].map(el=>el.textContent).join('\n\n───\n\n');
+  navigator.clipboard.writeText(txts);
+}
+
+function generateEtsy(){
+  const product=document.getElementById('etsy-product').value||'Digital Printable PDF';
+  const cat=document.getElementById('etsy-cat').value,price=document.getElementById('etsy-price').value||'4.99';
+  const kw=(document.getElementById('etsy-keywords').value||'printable, instant download').split(',').map(k=>k.trim()).filter(Boolean);
+  const baseKws=[...kw,'instant download','digital download','printable pdf','print at home'];
+  const tags=[...new Set(baseKws)].slice(0,13).map(t=>t.slice(0,20)).join(', ');
+  const title=`${product} | ${kw[0]||'Printable'} Instant Download PDF | ${kw[1]||'Digital'} Gift`.slice(0,140);
+  const desc=`Instant digital download — print at home in minutes!\n\n✨ WHAT YOU GET:\n• High-quality ${product.toLowerCase()}\n• PDF file ready to print (US Letter 8.5x11")\n• Print as many times as you need\n\n🖨️ HOW TO USE:\n1. Purchase → instant download link to your email\n2. Open PDF in Adobe Reader or any PDF viewer\n3. Print at home or at local print shop\n\n💛 PERFECT FOR:\n• ${kw[0]||'Gift giving'} · ${kw[1]||'Personal use'} · Last-minute gifts\n\n📋 FILE DETAILS:\n• Format: PDF (high resolution, print-ready)\n• Size: US Letter 8.5 x 11 inches\n• Price: $${price}\n\nQuestions? Message me anytime! 💛`;
+  document.getElementById('etsy-content').textContent=`📌 ETSY LISTING\n\nTitle (${title.length}/140):\n${title}\n\nCategory: ${cat}\nPrice: $${price}\n\nTags (${tags.split(',').length}/13):\n${tags}\n\n━━━ DESCRIPTION ━━━\n${desc}`;
+  document.getElementById('etsy-output').style.display='block';
+}
+
+const PALETTES={
+  "Analog Revival / journaling (cream + dark ink)":[{hex:"#FAF7F2",name:"Background cream",use:"Nền trang"},{hex:"#2C1810",name:"Dark ink",use:"Text chính"},{hex:"#8B7355",name:"Warm brown",use:"Accent / borders"},{hex:"#D4A574",name:"Tan gold",use:"Highlight"},{hex:"#F0E6D3",name:"Light parchment",use:"Secondary bg"}],
+  "Cottagecore (sage + warm brown)":[{hex:"#EAE6DC",name:"Linen",use:"Nền"},{hex:"#7B9E5E",name:"Sage green",use:"Text accent"},{hex:"#5C4033",name:"Dark brown",use:"Text chính"},{hex:"#C9B99A",name:"Warm beige",use:"Secondary"},{hex:"#D4896A",name:"Dusty rose",use:"Highlight"}],
+  "Dark academia (deep navy + gold)":[{hex:"#1a1a2e",name:"Deep navy",use:"Nền"},{hex:"#d4af37",name:"Warm gold",use:"Text / accent"},{hex:"#ffffff",name:"White",use:"Text phụ"},{hex:"#8B7355",name:"Antique brown",use:"Border"},{hex:"#2d2d44",name:"Muted navy",use:"Secondary bg"}],
+  "Minimal Scandinavian (white + charcoal)":[{hex:"#FFFFFF",name:"Pure white",use:"Nền"},{hex:"#2C2C2C",name:"Charcoal",use:"Text chính"},{hex:"#E8E8E4",name:"Off white",use:"Secondary bg"},{hex:"#9B9B93",name:"Warm gray",use:"Text phụ"},{hex:"#4A4A4A",name:"Dark gray",use:"Accent"}],
+  "Boho warm (terracotta + sand)":[{hex:"#F5E6D3",name:"Sand",use:"Nền"},{hex:"#C1440E",name:"Terracotta",use:"Accent chính"},{hex:"#3D2B1F",name:"Dark espresso",use:"Text"},{hex:"#D4A96A",name:"Golden sand",use:"Highlight"},{hex:"#8B6347",name:"Warm sienna",use:"Border"}],
+  "Retro 70s (mustard + burnt orange)":[{hex:"#F5E6C8",name:"Cream yellow",use:"Nền"},{hex:"#D4660A",name:"Burnt orange",use:"Accent chính"},{hex:"#2C1F0E",name:"Dark brown",use:"Text"},{hex:"#C9A227",name:"Mustard",use:"Highlight"},{hex:"#8B4513",name:"Saddle brown",use:"Secondary"}],
+  "Fresh spring (mint + soft pink)":[{hex:"#F8FBF8",name:"Soft white",use:"Nền"},{hex:"#7EC8A4",name:"Mint green",use:"Accent chính"},{hex:"#2D4A3E",name:"Dark teal",use:"Text"},{hex:"#F0B8C0",name:"Soft pink",use:"Highlight"},{hex:"#E8F5EE",name:"Light mint",use:"Secondary bg"}],
+  "Halloween (black + orange + purple)":[{hex:"#1A0A2E",name:"Deep purple black",use:"Nền"},{hex:"#FF6B1A",name:"Pumpkin orange",use:"Accent chính"},{hex:"#FFFFFF",name:"Ghost white",use:"Text"},{hex:"#9B59B6",name:"Witch purple",use:"Secondary accent"},{hex:"#2ECC71",name:"Slime green",use:"Highlight"}],
+  "Christmas (deep red + forest green + gold)":[{hex:"#FAF6F0",name:"Cream white",use:"Nền"},{hex:"#8B0000",name:"Deep red",use:"Accent chính"},{hex:"#2D5016",name:"Forest green",use:"Secondary accent"},{hex:"#D4AF37",name:"Warm gold",use:"Highlight"},{hex:"#1A1A1A",name:"Almost black",use:"Text"}],
+};
+
+function generatePalette(){
+  const vibe=document.getElementById('pal-vibe').value;
+  const pal=PALETTES[vibe]||PALETTES["Analog Revival / journaling (cream + dark ink)"];
+  let html=`<div class="card-title">${vibe}</div><div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">`;
+  pal.forEach(c=>{
+    const isDark=parseInt(c.hex.replace('#','').slice(0,2),16)<100;
+    html+=`<div style="flex:1;min-width:88px;border-radius:var(--radius-sm);overflow:hidden;border:0.5px solid var(--border)"><div style="height:62px;background:${c.hex};display:flex;align-items:flex-end;padding:4px 7px"><span style="font-size:10px;font-family:var(--mono);color:${isDark?'#fff':'#2C1810'}">${c.hex}</span></div><div style="padding:7px 8px;background:var(--bg)"><div style="font-size:12px;font-weight:500">${c.name}</div><div style="font-size:11px;color:var(--text2)">${c.use}</div></div></div>`;
+  });
+  html+=`</div><div style="background:var(--bg2);border-radius:var(--radius-sm);padding:10px;font-size:12px;font-family:var(--mono);color:var(--text)">`;
+  pal.forEach(c=>{html+=`${c.use.padEnd(20)}: ${c.hex}\n`;});
+  html+=`</div><button class="btn-sm" style="margin-top:8px" onclick="copyPalette()">⎘ Copy hex codes</button>`;
+  document.getElementById('palette-content').innerHTML=html;
+  document.getElementById('palette-output').style.display='block';
+  window._currentPalette=pal;
+}
+function copyPalette(){if(window._currentPalette)navigator.clipboard.writeText(window._currentPalette.map(c=>`${c.use}: ${c.hex}`).join('\n'));}
+
+function generateDesign(){
+  const type=document.getElementById('product-type').value;
+  const niche=document.getElementById('niche').value||'aesthetic';
+  const vibe=document.getElementById('vibe').value,buyer=document.getElementById('buyer').value,price=document.getElementById('price').value;
+  const c1=document.getElementById('color1').value||'AI chọn',c2=document.getElementById('color2').value||'AI chọn',c3=document.getElementById('color3').value||'AI chọn';
+  const extra=document.getElementById('extra').value;
+  const tL={'wall-art':'Wall Art PNG','journal':'Journal / Planner PDF','coloring':'Coloring Page PDF','sticker':'Sticker Sheet PNG','svg':'SVG Cut File','clipart':'Clip Art Bundle PNG','ebook':'Ebook / Guide PDF'};
+  const sz={'wall-art':'3000×3000px, 300dpi','journal':'2550×3300px, 300dpi (US Letter)','coloring':'2550×3300px, 300dpi','sticker':'3000×3000px, 300dpi, transparent bg','svg':'3000×3000px, export SVG+PNG','clipart':'Individual PNGs 1000-2000px, transparent bg','ebook':'2550×3300px, 300dpi'};
+  const tl={'wall-art':'Midjourney / Leonardo AI + Figma','journal':'Figma (layout) + ChatGPT (content)','coloring':'Adobe Firefly "line art coloring page"','sticker':'Adobe Firefly (transparent PNG) + Figma','svg':'Inkscape hoặc Figma (export SVG)','clipart':'Adobe Firefly + Figma (bundle)','ebook':'ChatGPT (content) + Figma (layout)'};
+  const pl={'wall-art':'Etsy + Society6 + Redbubble','journal':'Etsy + Gumroad','coloring':'Etsy + Creative Fabrica','sticker':'Etsy + TeePublic','svg':'Etsy + Creative Fabrica','clipart':'Etsy + Creative Fabrica','ebook':'Gumroad + Ko-fi'};
+  const out=`🎯 PRODUCT: ${tL[type]}\n🎨 NICHE: ${niche}\n✨ VIBE: ${vibe}\n👤 BUYER: ${buyer}\n💰 PRICE: ${price}\n\n━━━ FILE SPECS ━━━\nKích thước: ${sz[type]}\nMàu nền: ${c1}\nMàu text: ${c2}\nMàu accent: ${c3}\nFormat: ${type==='svg'?'SVG + PNG':['journal','coloring','ebook'].includes(type)?'PDF (print-ready CMYK)':'PNG transparent / white bg'}\n\n━━━ FREE TOOL ━━━\n${tl[type]}\n\n━━━ PLATFORM ━━━\nUpload: ${pl[type]}${extra?'\n\n━━━ YÊU CẦU THÊM ━━━\n'+extra:''}`;
+  document.getElementById('gen-content').textContent=out;
+  document.getElementById('gen-output').style.display='block';
+}
+
+// Init
+(function(){ renderHistory(); })();
+</script>
+</body>
+</html>
