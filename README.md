@@ -1,4 +1,4 @@
-# KalanneByLe — POD Studio 🎨
+# KalanneByLe — POD Studio 🎨 https://dash.cloudflare.com/45f7d6aa7cee5fad2a0ec74ea9e38b0f/workers-and-pages
 
 A standalone, all-in-one browser tool for digital product sellers on Etsy and POD platforms. No installation, no backend, no subscription — just open the HTML file and go.
 
