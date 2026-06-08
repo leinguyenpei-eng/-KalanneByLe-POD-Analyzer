@@ -1004,8 +1004,6 @@ footer { color: var(--text3); border-color: var(--border); }
   <div class="daily-tabs">
     <button class="daily-tab active" onclick="switchDailyTab('daily-generate',this)">⚡ Generate</button>
     <button class="daily-tab" onclick="switchDailyTab('daily-parse',this)">📥 Parse Bot</button>
-    <button class="daily-tab" onclick="switchDailyTab('daily-flow',this)">📋 Flow</button>
-    <button class="daily-tab" onclick="switchDailyTab('daily-tools',this)">🔗 Tools</button>
   </div>
 
   <!-- TAB: Generate -->
@@ -1098,6 +1096,12 @@ footer { color: var(--text3); border-color: var(--border); }
     <button class="parse-btn" onclick="dailyParseBot()">📥 Parse & Display</button>
 
     <div id="daily-parse-output" style="display:none;margin-top:14px">
+      <!-- Niche info (daily format) -->
+      <div id="daily-parsed-niche-info" style="display:none;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px"></div>
+      <!-- Color palette (daily format) -->
+      <div id="daily-parsed-palette" style="display:none;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px">
+        <div style="font-size:9px;color:var(--lime);font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">🎨 Design Palette</div>
+      </div>
       <!-- Parsed quotes to approve -->
       <div style="margin-bottom:12px">
         <div class="brief-lbl">Quotes — Approve or Skip</div>
@@ -1110,106 +1114,6 @@ footer { color: var(--text3); border-color: var(--border); }
       <div style="display:flex;gap:8px;margin-top:10px">
         <button class="btn-sm" style="flex:1;padding:10px" onclick="document.getElementById('daily-parse-output').style.display='none';document.getElementById('daily-parse-input').value=''">↺ Clear</button>
         <button class="btn-sm" style="flex:1;padding:10px;background:var(--lime-dim);color:var(--bg);font-weight:700" onclick="dailyExportParsed()">⬇ Export Approved</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB: Flow (merged from tool-flow) -->
-  <div id="daily-flow" class="daily-section">
-
-    <!-- ── 3-COL NEXT STEP GUIDE ── -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
-      <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:10px">
-        <div style="font-size:9px;color:var(--lime);font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">① NOW</div>
-        <div style="font-size:11px;color:var(--text);font-weight:600;margin-bottom:4px">Daily</div>
-        <div style="font-size:10px;color:var(--text3);line-height:1.5">Generate niche → approve quotes → get design brief</div>
-      </div>
-      <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:10px">
-        <div style="font-size:9px;color:var(--amber);font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">② DESIGN</div>
-        <div style="font-size:11px;color:var(--text);font-weight:600;margin-bottom:4px">Canva → Analyzer</div>
-        <div style="font-size:10px;color:var(--text3);line-height:1.5">Make design in Canva → upload to Analyzer → score ≥ 6 = APPROVE</div>
-      </div>
-      <div style="background:var(--bg2);border:0.5px solid var(--lime-dark);border-radius:8px;padding:10px">
-        <div style="font-size:9px;color:var(--lime);font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">③ POST</div>
-        <div style="font-size:11px;color:var(--text);font-weight:600;margin-bottom:4px">SEO → Listing → Upload</div>
-        <div style="font-size:10px;color:var(--text3);line-height:1.5">SEO tool → copy title + tags → create Etsy listing → upload PNG files</div>
-      </div>
-    </div>
-
-    <!-- ── POSTING CHECKLIST ── -->
-    <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px">
-      <div style="font-size:10px;color:var(--lime);font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">📦 LISTING CHECKLIST</div>
-      <div id="daily-checklist-items">
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Title</b> — SEO title max 140 chars (use SEO tool → copy)</span></label>
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Tags</b> — 13 tags, each ≤ 20 chars (Analyzer exports these)</span></label>
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Photos</b> — 10 mockup images (use Mockup tool first)</span></label>
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Description</b> — keyword-rich, first 2 lines visible</span></label>
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Files</b> — PNG + PDF in ZIP, named clearly (no spaces)</span></label>
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Price</b> — $4.99–$7.99 for digital downloads</span></label>
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Category</b> — Digital Downloads → Clip Art & Image Files</span></label>
-        <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2)"><b>Renew</b> — set listing to auto-renew after sale</span></label>
-      </div>
-      <button onclick="document.querySelectorAll('#daily-checklist-items input').forEach(c=>c.checked=false)" style="margin-top:8px;font-size:10px;padding:4px 10px;background:var(--bg3);border:0.5px solid var(--border);border-radius:20px;color:var(--text3);cursor:pointer;font-family:var(--mono)">↺ Reset</button>
-    </div>
-
-    <!-- ── SMART PARSE (from flow) ── -->
-    <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px">
-      <div style="font-size:10px;color:var(--lime);font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">⚡ SMART PARSE — Paste Bot Output</div>
-      <div style="display:flex;gap:0;margin-bottom:8px;border:0.5px solid var(--border);border-radius:6px;overflow:hidden">
-        <button id="dflow-tab-smart" onclick="switchDflowTab('smart')" style="flex:1;padding:7px;font-size:11px;font-weight:600;background:var(--bg3);border:none;border-right:0.5px solid var(--border);color:var(--lime);cursor:pointer;font-family:var(--mono)">⚡ Smart</button>
-        <button id="dflow-tab-json" onclick="switchDflowTab('json')" style="flex:1;padding:7px;font-size:11px;font-weight:500;background:none;border:none;color:var(--text3);cursor:pointer;font-family:var(--mono)">{ } JSON</button>
-      </div>
-      <div id="dflow-panel-smart">
-        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-family:var(--mono)">Paste bất kỳ bot output → tự tóm thành checklist có thể tick</div>
-        <textarea id="dflow-smart-input" rows="5" placeholder="Paste output từ Bot hoặc Groq vào đây..." style="width:100%;font-family:var(--mono);font-size:11px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);outline:none;resize:vertical;box-sizing:border-box"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn-primary" style="flex:1" onclick="dflowSmartParse()">⚡ Tóm → Checklist</button>
-          <button class="btn-secondary" onclick="document.getElementById('dflow-smart-input').value='';document.getElementById('dflow-smart-result').style.display='none'">Clear</button>
-        </div>
-        <div id="dflow-smart-result" style="display:none;margin-top:12px"></div>
-      </div>
-      <div id="dflow-panel-json" style="display:none">
-        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-family:var(--mono)">Paste JSON output → step-by-step workflow</div>
-        <textarea id="dflow-json-input" rows="5" placeholder='Paste JSON here...' style="width:100%;font-family:var(--mono);font-size:11px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);outline:none;resize:vertical;box-sizing:border-box"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn-primary" style="flex:1" onclick="dflowJsonParse()">⚡ Parse &amp; Start</button>
-          <button class="btn-secondary" onclick="dflowReset()">Clear</button>
-        </div>
-      </div>
-      <div id="dflow-error" style="display:none;color:var(--red);font-size:11px;margin-top:6px"></div>
-    </div>
-
-    <!-- Step-by-step output -->
-    <div id="dflow-steps" style="display:none">
-      <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-size:11px;font-weight:600;color:var(--text)">Item <span id="dflow-step-num">1</span>/<span id="dflow-step-total">1</span></div>
-          <div style="display:flex;gap:6px">
-            <button class="btn-secondary" onclick="dflowPrev()">← Prev</button>
-            <button class="btn-secondary" onclick="dflowNext()">Next →</button>
-          </div>
-        </div>
-        <div id="dflow-step-content" style="font-size:12px;line-height:1.7"></div>
-      </div>
-      <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:12px">
-        <div style="font-size:10px;color:var(--text3);font-family:var(--mono);font-weight:700;text-transform:uppercase;margin-bottom:8px">All Items (<span id="dflow-total-count">0</span>)</div>
-        <div id="dflow-all-items"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="daily-tools" class="daily-section">
-    <div style="padding:8px 0">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:12px;font-family:var(--mono)">FREE TOOLS — OPEN IN NEW TAB</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <a href="https://www.canva.com" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">🎨 Canva — Design</a>
-        <a href="https://www.printify.com" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">🖨 Printify — POD</a>
-        <a href="https://trends.google.com/trends/" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">📈 Google Trends</a>
-        <a href="https://erank.com" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">🔍 eRank — Etsy SEO</a>
-        <a href="https://www.marmalead.com" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">🍊 Marmalead</a>
-        <a href="https://app.kittl.com" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">✦ Kittl — Design</a>
-        <a href="https://placeit.net" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">📸 Placeit — Mockups</a>
-        <a href="https://unblast.com" target="_blank" class="btn-secondary" style="text-align:center;text-decoration:none;display:block">🎁 Unblast — Free Mockups</a>
       </div>
     </div>
   </div>
@@ -1506,22 +1410,30 @@ function dailyParseBot() {
   }
 
   _parsedApproved = [];
+
+  // Support both formats:
+  // 1. Daily Generate format: { quotes:[{text,vibe}], etsy:{title,tags,description}, design:{...} }
+  // 2. Telegram Bot format:   { bonus_quotes:[{quote,...}], seo_title, tags, description }
   const quotes = data.bonus_quotes || data.quotes || [];
-  const seoTitle = data.seo_title || '';
-  const tags = data.tags || [];
-  const desc = data.description || '';
-  window._parsedDesc = desc;
-  window._parsedTags = tags;
+
+  // SEO fields: try top-level first (bot format), then nested etsy object (daily format)
+  const seoTitle = data.seo_title || (data.etsy && data.etsy.title) || '';
+  const tags     = data.tags      || (data.etsy && data.etsy.tags)  || [];
+  const desc     = data.description || (data.etsy && data.etsy.description) || '';
+
+  window._parsedDesc  = desc;
+  window._parsedTags  = Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim()).filter(Boolean);
   window._parsedTitle = seoTitle;
 
-  // Render quotes
+  // Render quotes — handle both {text,vibe} and {quote,trigger,product_type,color}
   document.getElementById('daily-parsed-quotes').innerHTML = quotes.length
     ? quotes.map((q, i) => {
-        const text = q.quote || q.text || '';
+        const text    = q.quote || q.text || '';
         const trigger = q.trigger || q.vibe || '';
-        const product = q.product_type || '';
-        const color = q.color || '';
-        return `<div class="quote-card" id="pqc-${i}" data-q='${JSON.stringify(q).replace(/'/g,"&#39;")}'>
+        const product = q.product_type || q.product || '';
+        const color   = q.color || q.color_bg || '';
+        const safeDq  = JSON.stringify(q).replace(/'/g, "&#39;");
+        return `<div class="quote-card" id="pqc-${i}" data-q='${safeDq}'>
           <div class="quote-inner">
             <div class="quote-text">"${text}"</div>
             <div class="quote-vibe">${[trigger, product, color].filter(Boolean).join(' · ')}</div>
@@ -1535,13 +1447,48 @@ function dailyParseBot() {
     : '<div style="font-size:12px;color:var(--text3);padding:12px">Không tìm thấy quotes trong JSON này.</div>';
 
   // Render SEO fields
+  const tagsArr = window._parsedTags;
   document.getElementById('daily-parsed-seo').innerHTML =
     (seoTitle ? dailyCopyBox('SEO Title (' + seoTitle.length + '/140)', seoTitle, 'parsed-copy-title') : '') +
-    (tags.length ? `<div class="copy-box" onclick="navigator.clipboard.writeText((window._parsedTags||[]).join(', '));this.querySelector('.copy-hint').textContent='✓ Copied!';setTimeout(()=>this.querySelector('.copy-hint').textContent='click → copy',2000)">
-      <div class="copy-box-head"><span class="copy-box-lbl">Tags (${tags.length}/13)</span><span class="copy-hint">click → copy all</span></div>
-      <div style="padding:8px 12px">${tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}</div>
+    (tagsArr.length ? `<div class="copy-box" onclick="navigator.clipboard.writeText((window._parsedTags||[]).join(', '));this.querySelector('.copy-hint').textContent='✓ Copied!';setTimeout(()=>this.querySelector('.copy-hint').textContent='click → copy',2000)">
+      <div class="copy-box-head"><span class="copy-box-lbl">Tags (${tagsArr.length}/13)</span><span class="copy-hint">click → copy all</span></div>
+      <div style="padding:8px 12px">${tagsArr.map(t => `<span class="tag-chip">${t}</span>`).join('')}</div>
     </div>` : '') +
     (desc ? dailyCopyBox('Description', desc, 'parsed-copy-desc') : '');
+
+  // Show niche info if available (daily format has extra useful fields)
+  const nicheInfo = [
+    data.niche   ? `<b>Niche:</b> ${data.niche}` : '',
+    data.product ? `<b>Product:</b> ${data.product}` : '',
+    data.why     ? `<b>Why:</b> ${data.why}` : '',
+    data.price   ? `<b>Price:</b> ${data.price}` : '',
+    data.audience? `<b>Target:</b> ${data.audience}` : '',
+  ].filter(Boolean);
+  const nicheEl = document.getElementById('daily-parsed-niche-info');
+  if (nicheEl) {
+    nicheEl.innerHTML = nicheInfo.length
+      ? nicheInfo.map(s => `<div style="font-size:11px;color:var(--text2);padding:3px 0">${s}</div>`).join('')
+      : '';
+    nicheEl.style.display = nicheInfo.length ? 'block' : 'none';
+  }
+
+  // Show design palette if available (daily format)
+  if (data.design && data.design.colors && data.design.colors.length) {
+    const palEl = document.getElementById('daily-parsed-palette');
+    if (palEl) {
+      const colors = data.design.colors;
+      palEl.innerHTML = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">` +
+        colors.map(c => `<div style="display:flex;align-items:center;gap:5px;background:var(--bg3);border:0.5px solid var(--border);border-radius:5px;padding:5px 8px">
+          <div style="width:14px;height:14px;border-radius:3px;background:${c.hex};border:0.5px solid rgba(255,255,255,.2)"></div>
+          <span style="font-size:10px;color:var(--text2);font-family:var(--mono)">${c.hex}</span>
+          <span style="font-size:10px;color:var(--text3)">${c.name||c.label||''}</span>
+        </div>`).join('') +
+        `</div>` +
+        (data.design.font_heading ? `<div style="font-size:10px;color:var(--text3);margin-top:6px">Font: <b style="color:var(--text2)">${data.design.font_heading}</b>${data.design.font_body ? ' / ' + data.design.font_body : ''}</div>` : '') +
+        (data.design.layout ? `<div style="font-size:10px;color:var(--text3);margin-top:3px">Layout: ${data.design.layout}</div>` : '');
+      palEl.style.display = 'block';
+    }
+  }
 
   document.getElementById('daily-parse-output').style.display = 'block';
   document.getElementById('daily-parse-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2235,111 +2182,13 @@ document.getElementById('quote').addEventListener('keydown', e => {
 
 
 /* ═══ DAILY FLOW TAB FUNCTIONS ═══ */
-let _dflowData = [], _dflowIdx = 0;
 
-function switchDflowTab(tab) {
-  const smart = tab === 'smart';
-  document.getElementById('dflow-panel-smart').style.display = smart ? 'block' : 'none';
-  document.getElementById('dflow-panel-json').style.display  = smart ? 'none'  : 'block';
-  const bSmart = document.getElementById('dflow-tab-smart');
-  const bJson  = document.getElementById('dflow-tab-json');
-  if (bSmart) { bSmart.style.background = smart ? 'var(--bg3)' : 'none'; bSmart.style.color = smart ? 'var(--lime)' : 'var(--text3)'; }
-  if (bJson)  { bJson.style.background  = smart ? 'none' : 'var(--bg3)'; bJson.style.color  = smart ? 'var(--text3)' : 'var(--lime)'; }
-}
 
-function dflowErr(msg) {
-  const el = document.getElementById('dflow-error');
-  if (el) { el.textContent = msg; el.style.display = msg ? 'block' : 'none'; }
-}
 
-function dflowJsonParse() {
-  const raw = (document.getElementById('dflow-json-input')?.value || '').trim();
-  if (!raw) { dflowErr('Paste JSON vào trước!'); return; }
-  try {
-    const d = JSON.parse(raw.replace(/```json|```/g, '').trim());
-    _dflowData = Array.isArray(d) ? d : (d.items||d.quotes||d.results||d.niches||[d]);
-  } catch(e) { dflowErr('JSON không hợp lệ: ' + e.message); return; }
-  if (!_dflowData.length) { dflowErr('Không tìm thấy items!'); return; }
-  dflowErr('');
-  _dflowIdx = 0;
-  document.getElementById('dflow-step-total').textContent  = _dflowData.length;
-  document.getElementById('dflow-total-count').textContent = _dflowData.length;
-  document.getElementById('dflow-steps').style.display = 'block';
-  dflowRenderAll(); dflowRenderStep();
-}
 
-function dflowRenderStep() {
-  const item = _dflowData[_dflowIdx];
-  document.getElementById('dflow-step-num').textContent = _dflowIdx + 1;
-  const c = document.getElementById('dflow-step-content'); if (!c) return;
-  c.innerHTML = Object.entries(item).map(([k, v]) => {
-    const val = typeof v === 'object' ? JSON.stringify(v, null, 2) : v;
-    return `<div style="margin-bottom:8px;padding:8px 10px;background:var(--bg3);border-radius:6px;border:0.5px solid var(--border)">
-      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;font-weight:600;margin-bottom:3px">${k}</div>
-      <div style="white-space:pre-wrap;font-size:12px;color:var(--text2)">${val}</div>
-      <button class="btn-sm" style="margin-top:4px;font-size:10px" onclick="navigator.clipboard.writeText(${JSON.stringify(String(val))})">Copy</button>
-    </div>`;
-  }).join('');
-}
 
-function dflowRenderAll() {
-  const el = document.getElementById('dflow-all-items'); if (!el) return;
-  el.innerHTML = _dflowData.map((item, i) => {
-    const label = item.title||item.seo_title||item.name||item.quote||('Item '+(i+1));
-    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;background:var(--bg3);border:0.5px solid var(--border);margin-bottom:5px;cursor:pointer" onclick="_dflowIdx=${i};dflowRenderStep()">
-      <span style="font-size:10px;color:var(--text3);font-family:var(--mono);min-width:22px">${i+1}</span>
-      <span style="flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label}</span>
-      <button class="btn-sm" style="font-size:10px" onclick="event.stopPropagation();navigator.clipboard.writeText(JSON.stringify(_dflowData[${i}],null,2))">Copy</button>
-    </div>`;
-  }).join('');
-}
 
-function dflowNext() { if (_dflowIdx < _dflowData.length-1) { _dflowIdx++; dflowRenderStep(); } }
-function dflowPrev() { if (_dflowIdx > 0) { _dflowIdx--; dflowRenderStep(); } }
-function dflowReset() {
-  _dflowData = []; _dflowIdx = 0;
-  const inp = document.getElementById('dflow-json-input'); if (inp) inp.value = '';
-  const st  = document.getElementById('dflow-steps'); if (st) st.style.display = 'none';
-  dflowErr('');
-}
 
-function dflowSmartParse() {
-  const raw = (document.getElementById('dflow-smart-input')?.value || '').trim();
-  if (!raw) return;
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-  const checklist = [], shouldDo = [], shouldNot = [], order = [];
-  const reShould    = /^(nên|yes|✅|should|recommend|👍)/i;
-  const reShouldNot = /^(không nên|avoid|❌|no\b|skip|don\'t)/i;
-  const reOrder     = /thứ tự|upload order|#\d|→\s*(etsy|gumroad|ko-fi)/i;
-  const reCheck     = /^☐|^\[ \]|^-\s+\[/;
-  const rePlatform  = /etsy|gumroad|ko-fi|redbubble|society6|zazzle|teepublic|creative fabrica|pinterest|tiktok/i;
-  const reAction    = /mở|tạo|upload|quay|pin|download|export|copy|paste|check|submit|add|create|launch/i;
-  let inOrder = false;
-  for (const line of lines) {
-    if (/^━+$|^─+$|^={3,}$/.test(line)) { inOrder = false; continue; }
-    if (reCheck.test(line)) { checklist.push(line.replace(/^☐|\[ \]/, '').trim()); continue; }
-    if (reOrder.test(line)) { inOrder = true; }
-    if (inOrder && (rePlatform.test(line) || /^(etsy|gumroad|ko-fi)\s*#?\d*/i.test(line))) { order.push(line.replace(/^[⚡✅☐\-•]\s*/, '').trim()); continue; }
-    if (reShouldNot.test(line)) { shouldNot.push(line.replace(/^[^:：]+[：:]\s*/, '').trim()); continue; }
-    if (reShould.test(line))    { shouldDo.push(line.replace(/^[^:：]+[：:]\s*/, '').trim()); continue; }
-    if (reAction.test(line) && line.length < 100) checklist.push(line.replace(/^[•\-⚡✅☐]\s*/, '').trim());
-  }
-  const section = (icon, title, color, items) => {
-    if (!items.length) return '';
-    return `<div style="margin-bottom:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${color};font-family:var(--mono);margin-bottom:6px">${icon} ${title}</div>${
-      items.map(it => `<label style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:0.5px solid var(--border);cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--lime)"/><span style="font-size:11px;color:var(--text2);line-height:1.5">${it}</span></label>`).join('')
-    }</div>`;
-  };
-  let out = '';
-  out += section('✅', 'Action Items', 'var(--lime)', checklist.length ? checklist : shouldDo);
-  if (checklist.length && shouldDo.length) out += section('👍', 'Recommended', 'var(--lime)', shouldDo);
-  out += section('❌', 'Avoid', 'var(--red)', shouldNot);
-  out += section('📦', 'Post Order', 'var(--amber)', order);
-  if (!out) out = `<div style="font-size:11px;color:var(--text3);padding:10px 0">Không tìm thấy action items. Paste bot output có dấu gạch đầu dòng hoặc emoji.</div>`;
-  const el = document.getElementById('dflow-smart-result');
-  if (el) { el.innerHTML = `<div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:12px">${out}</div>`; el.style.display = 'block'; }
-}
-/* ═══ END DAILY FLOW TAB ═══ */
 
 
 function switchSEOTab(name, btn) {
