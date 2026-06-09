@@ -3027,12 +3027,6 @@ function exportPODCSV(){
 </style>
 
 <div style="padding:16px">
-  <!-- Key bar for Groq -->
-  <div class="key-bar">
-    <div class="key-dot" id="daily-key-dot"></div>
-    <input type="password" id="daily-groq-key" placeholder="Groq API key (gsk_...)" oninput="dailyKeyInput()" autocomplete="off"/>
-    <button class="key-save" onclick="dailySaveKey()">Save</button>
-  </div>
 
   <!-- Sub tabs -->
   <div class="daily-tabs">
@@ -3178,20 +3172,11 @@ let _parsedApproved = [];
 
 /* Key management */
 window.addEventListener('load', () => {
-  const k = localStorage.getItem('daily_groq_key');
-  if (k) { document.getElementById('daily-groq-key').value = k; dailyUpdateDot(k); }
 });
-function dailyKeyInput() { dailyUpdateDot(document.getElementById('daily-groq-key').value.trim()); }
-function dailySaveKey() {
-  const v = document.getElementById('daily-groq-key').value.trim();
-  if (v) { localStorage.setItem('daily_groq_key', v); dailyUpdateDot(v); }
-}
-function dailyGetKey() { return localStorage.getItem('daily_groq_key') || document.getElementById('daily-groq-key').value.trim(); }
-function dailyUpdateDot(v) {
-  const d = document.getElementById('daily-key-dot');
-  if (!d) return;
-  d.className = 'key-dot' + (v ? (v.startsWith('gsk_') ? ' ok' : ' err') : '');
-}
+function dailyKeyInput() {}
+function dailySaveKey() {}
+function dailyGetKey() { return getKey('groq') || ''; }
+function dailyUpdateDot(v) {}
 
 /* Tab switch */
 function switchDailyTab(id, btn) {
@@ -4268,13 +4253,13 @@ function smartParse() {
   const section = (icon, title, color, items) => {
     if (!items.length) return '';
     const rows = items.map(i =>
-      `<div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:0.5px solid var(--border)">
-        <span style="color:${color};flex-shrink:0;margin-top:1px">${icon}</span>
-        <span style="font-size:12px;color:var(--text2);line-height:1.5">${i}</span>
+      `<div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:0.5px solid var(--border);min-width:0">
+        <span style="color:${color};flex-shrink:0;margin-top:2px">${icon}</span>
+        <span style="font-size:13px;color:var(--text2);line-height:1.6;flex:1;min-width:0;word-break:break-word;overflow-wrap:anywhere;white-space:normal">${i}</span>
       </div>`
     ).join('');
-    return `<div style="margin-bottom:14px">
-      <div style="font-size:10px;font-weight:700;color:${color};font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px">${title}</div>
+    return `<div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:${color};font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px">${title}</div>
       ${rows}
     </div>`;
   };
@@ -4282,13 +4267,13 @@ function smartParse() {
   const checkSection = (items) => {
     if (!items.length) return '';
     const rows = items.map((item, i) =>
-      `<label style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer">
-        <input type="checkbox" id="fc${i}" style="margin-top:3px;accent-color:var(--lime);flex-shrink:0">
-        <span style="font-size:12px;color:var(--text2);line-height:1.5" onclick="document.getElementById('fc${i}').click()">${item}</span>
+      `<label style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--border);cursor:pointer;min-width:0">
+        <input type="checkbox" id="fc${i}" style="margin-top:3px;accent-color:var(--lime);flex-shrink:0;width:15px;height:15px">
+        <span style="font-size:13px;color:var(--text);line-height:1.6;flex:1;min-width:0;word-break:break-word;overflow-wrap:anywhere;white-space:normal" onclick="document.getElementById('fc${i}').click()">${item}</span>
       </label>`
     ).join('');
-    return `<div style="margin-bottom:14px">
-      <div style="font-size:10px;font-weight:700;color:var(--lime);font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px">☐ ACTION CHECKLIST</div>
+    return `<div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--lime);font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px">☐ ACTION CHECKLIST</div>
       ${rows}
     </div>`;
   };
@@ -4296,16 +4281,16 @@ function smartParse() {
   // Fallback: if nothing structured found, just show numbered lines
   if (!shouldDo.length && !checklist.length && !order.length) {
     const fallback = lines
-      .filter(l => l.length > 10 && l.length < 120)
+      .filter(l => l.length > 10)
       .filter(l => !/^━|^─|^=/.test(l))
-      .slice(0, 12)
+      .slice(0, 15)
       .map((l, i) =>
-        `<label style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer">
-          <input type="checkbox" id="ff${i}" style="margin-top:3px;accent-color:var(--lime);flex-shrink:0">
-          <span style="font-size:12px;color:var(--text2);line-height:1.5">${l.replace(/^[•\-⚡✅☐#\d.)]+\s*/, '')}</span>
+        `<label style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--border);cursor:pointer;min-width:0">
+          <input type="checkbox" id="ff${i}" style="margin-top:3px;accent-color:var(--lime);flex-shrink:0;width:15px;height:15px">
+          <span style="font-size:13px;color:var(--text);line-height:1.6;flex:1;min-width:0;word-break:break-word;overflow-wrap:anywhere;white-space:normal">${l.replace(/^[•\-⚡✅☐#\d.)]+\s*/, '')}</span>
         </label>`
       ).join('');
-    out = `<div style="font-size:10px;font-weight:700;color:var(--lime);font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px">📋 KEY POINTS</div>${fallback}`;
+    out = `<div style="font-size:11px;font-weight:700;color:var(--lime);font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px">📋 KEY POINTS</div>${fallback}`;
   } else {
     if (order.length)     out += section('→', 'THỨ TỰ UPLOAD', 'var(--amber,#f0a500)', order);
     if (shouldDo.length)  out += section('✓', 'NÊN LÀM', 'var(--lime)', shouldDo);
@@ -4313,15 +4298,117 @@ function smartParse() {
     out += checkSection(checklist);
   }
 
-  // Copy button
-  out += `<div style="display:flex;gap:6px;margin-top:10px">
-    <button class="btn-sm" style="font-size:10px;background:var(--bg3);border:0.5px solid var(--border)" onclick="smartCopyChecklist()">⎘ Copy checklist</button>
-    <button class="btn-sm" style="font-size:10px;background:var(--bg3);border:0.5px solid var(--border)" onclick="document.getElementById('flow-smart-input').value='';document.getElementById('flow-smart-result').style.display='none'">↺ Reset</button>
+  // Smart detect next step
+  const route = smartDetectRoute(raw);
+  out += `<div style="margin-top:16px;padding:14px;background:linear-gradient(135deg,rgba(80,200,120,0.08),rgba(80,200,120,0.02));border:1px solid var(--lime);border-radius:8px">
+    <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px">BƯỚC TIẾP THEO</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">${route.reason}</div>
+    <button onclick="smartGoTo('${route.tool}',${route.tabIdx},'${route.fillId}',\`${route.fillValue.replace(/`/g,'\\`')}\`)" style="display:block;width:100%;padding:12px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--mono);letter-spacing:.03em">${route.icon} ${route.label}</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-top:8px">
+    <button class="btn-sm" style="flex:1;font-size:11px;background:var(--bg3);border:0.5px solid var(--border)" onclick="smartCopyChecklist()">⎘ Copy checklist</button>
+    <button class="btn-sm" style="font-size:11px;background:var(--bg3);border:0.5px solid var(--border)" onclick="document.getElementById('flow-smart-input').value='';document.getElementById('flow-smart-result').style.display='none'">↺ Reset</button>
   </div>`;
 
   const el = document.getElementById('flow-smart-result');
   el.innerHTML = out;
   el.style.display = 'block';
+}
+
+function smartDetectRoute(raw) {
+  const t = raw.toLowerCase();
+
+  // Detect signals in the text
+  const hasQuote    = /quote|slogan|text|câu|viết|chữ/.test(t);
+  const hasDesign   = /design|midjourney|firefly|canva|figma|prompt|mockup|visual|artwork|logo|image|hình/.test(t);
+  const hasMockup   = /mockup|frame|canvas|scene|preview|treo|wall art|print/.test(t);
+  const hasCSV      = /csv|bulk|hàng loạt|nhiều sản phẩm|export|spreadsheet/.test(t);
+  const hasSEO      = /listing|title|tag|keyword|etsy seo|description|mô tả|tiêu đề/.test(t);
+  const hasNiche    = /niche|trending|chủ đề|thị trường|market|aesthetic|cottagecore|dark academia|boho/.test(t);
+  const hasUpload   = /upload|đăng|publish|etsy|gumroad|ko-fi|platform/.test(t);
+
+  // Extract niche keyword from text (first noun-like phrase after niche signals)
+  let nicheKw = '';
+  const nicheMatch = raw.match(/niche[:\s]+([^\n,\.]{3,40})/i) || raw.match(/aesthetic[:\s]+([^\n,\.]{3,30})/i) || raw.match(/(?:^|\n)[•\-]\s*([a-z][a-z\s]{5,35}(?:aesthetic|core|style|minimal|vintage|boho|dark))/im);
+  if (nicheMatch) nicheKw = nicheMatch[1].trim().replace(/[*_#]/g,'').slice(0,40);
+
+  // Extract first quote/slogan if present
+  let quoteKw = '';
+  const quoteMatch = raw.match(/(?:quote|slogan|câu)[:\s]+"?([^"\n]{5,60})"?/i) || raw.match(/"([^"]{5,60})"/);
+  if (quoteMatch) quoteKw = quoteMatch[1].trim().slice(0,60);
+
+  // Extract design description
+  let designKw = '';
+  const designMatch = raw.match(/(?:design|prompt|hình)[:\s]+([^\n]{5,60})/i);
+  if (designMatch) designKw = designMatch[1].trim().replace(/[*_#]/g,'').slice(0,60);
+
+  // Priority routing logic
+  if (hasSEO && quoteKw) return {
+    tool:'seo', tabIdx:7, fillId:'quote', fillValue: quoteKw,
+    icon:'✦', label:'Qua SEO → Tạo Listing',
+    reason:`Phát hiện quote/slogan — điền sẵn vào SEO Listing Generator.`
+  };
+  if (hasDesign && !hasMockup) return {
+    tool:'design', tabIdx:4, fillId:'prompt-desc', fillValue: designKw || nicheKw,
+    icon:'🛠', label:'Qua Tools → Tạo Design Prompt',
+    reason:`Phát hiện yêu cầu design — điền sẵn mô tả vào AI Prompter.`
+  };
+  if (hasMockup) return {
+    tool:'mockup', tabIdx:6, fillId:'', fillValue:'',
+    icon:'🖼', label:'Qua Mockup → Tạo Preview',
+    reason:`Phát hiện từ khóa mockup — chuyển sang tab Mockup.`
+  };
+  if (hasCSV) return {
+    tool:'csv', tabIdx:5, fillId:'csv-custom', fillValue: nicheKw || designKw,
+    icon:'📊', label:'Qua CSV → Bulk Quotes',
+    reason:`Phát hiện yêu cầu tạo nhiều quotes — điền sẵn vào CSV Generator.`
+  };
+  if (hasNiche && nicheKw) return {
+    tool:'niche', tabIdx:1, fillId:'p-niche', fillValue: nicheKw,
+    icon:'🎯', label:'Qua Niche → Research',
+    reason:`Phát hiện niche "${nicheKw}" — điền sẵn vào Niche tab.`
+  };
+  if (hasUpload && hasSEO) return {
+    tool:'seo', tabIdx:7, fillId:'quote', fillValue: quoteKw,
+    icon:'✦', label:'Qua SEO → Tạo Listing để Upload',
+    reason:`Sắp upload — tạo listing SEO trước.`
+  };
+
+  // Fallback: bot for more analysis
+  return {
+    tool:'bot', tabIdx:3, fillId:'bot-niche', fillValue: nicheKw,
+    icon:'🤖', label:'Qua Bot → Phân tích thêm',
+    reason:`Chưa detect được bước cụ thể — paste thêm vào Bot để phân tích sâu hơn.`
+  };
+}
+
+function smartGoTo(tool, tabIdx, fillId, fillValue) {
+  // Switch to the target tool tab
+  const btns = document.querySelectorAll('.tool-btn');
+  if (btns[tabIdx]) switchTool(tool, btns[tabIdx]);
+
+  // Fill in the relevant input after a short delay (tab switch animation)
+  if (fillId && fillValue) {
+    setTimeout(() => {
+      const el = document.getElementById(fillId);
+      if (el) {
+        el.value = fillValue;
+        el.dispatchEvent(new Event('input', {bubbles:true}));
+        // Visual highlight so user sees what was filled
+        el.style.transition = 'box-shadow 0.3s';
+        el.style.boxShadow = '0 0 0 2px var(--lime)';
+        el.focus();
+        setTimeout(() => { el.style.boxShadow = ''; }, 2000);
+      }
+      // Also sync sibling niche inputs
+      if (fillId === 'p-niche') {
+        ['bot-niche','daily-niche','niche'].forEach(id => {
+          const e = document.getElementById(id);
+          if (e && !e.value) e.value = fillValue;
+        });
+      }
+    }, 200);
+  }
 }
 
 function smartCopyChecklist() {
@@ -4348,7 +4435,7 @@ function smartCopyChecklist() {
         <button class="btn-primary" style="flex:1" onclick="smartParse()">⚡ Tóm gọn → Checklist</button>
         <button class="btn-secondary" onclick="document.getElementById('flow-smart-input').value='';document.getElementById('flow-smart-result').style.display='none'">Clear</button>
       </div>
-      <div id="flow-smart-result" style="display:none;margin-top:12px"></div>
+      <div id="flow-smart-result" style="display:none;margin-top:12px;overflow:hidden;max-width:100%;box-sizing:border-box"></div>
     </div>
 
     <div id="flow-panel-json" style="display:none">
