@@ -3136,7 +3136,7 @@ function exportPODCSV(){
   <!-- TAB: Parse Bot Output -->
   <div id="daily-parse" class="daily-section">
     <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:var(--mono)">
-      Paste JSON output từ Telegram bot hoặc n8n workflow vào đây:
+      Paste output từ Bot, Groq hoặc ChatGPT vào đây — JSON hoặc plain text đều được...
     </div>
     <textarea class="parse-ta" id="daily-parse-input" placeholder='{"seo_title":"...","tags":[...],"description":"...","bonus_quotes":[...]}'></textarea>
     <button class="parse-btn" onclick="dailyParseBot()">📥 Parse & Display</button>
@@ -3525,16 +3525,74 @@ function dailyExportApproved() {
   a.click();
 }
 
+/* ── PLAIN TEXT PARSER ────────────── */
+function parsePlainTextToData(raw) {
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+
+  // Extract quotes — lines that look like quotes or affirmations
+  const quotes = [];
+  const quotePatterns = [
+    /^[""](.+)[""]/, // "quoted text"
+    /^\d+[.)]\s+(.+)/, // 1. numbered list
+    /^[-•]\s+(.+)/, // bullet points
+    /^☐\s+(.+)/, // checkbox items
+  ];
+  for (const line of lines) {
+    if (line.length < 8 || line.length > 150) continue;
+    if (/^[━─=]{3,}/.test(line)) continue; // dividers
+    if (/^(Generate|Prompt|Bước|Step|File|Tool|Font|Màu|Color|Size|Layout|Export|━|─)/i.test(line)) continue;
+    for (const pat of quotePatterns) {
+      const m = line.match(pat);
+      if (m) { quotes.push({ quote: m[1].trim(), vibe: '', text: m[1].trim() }); break; }
+    }
+    // Plain affirmation lines (not too long, not a command)
+    if (!quotes.find(q => q.quote === line) && line.length > 10 && line.length < 100
+        && !/[:\[\]{}]/.test(line) && /[a-zA-ZÀ-ỹ]/.test(line)
+        && !/^(file|step|bước|tool|font|màu|size|layout|export|generate|prompt|note|tip)/i.test(line)) {
+      quotes.push({ quote: line, vibe: '', text: line });
+    }
+  }
+
+  // Extract SEO title
+  let seoTitle = '';
+  const titleMatch = raw.match(/(?:Title|Tiêu đề|SEO Title)[:\s]+([^\n]{10,140})/i)
+                  || raw.match(/^"([^"]{20,139})"/m);
+  if (titleMatch) seoTitle = titleMatch[1].trim().slice(0,140);
+
+  // Extract tags
+  let tags = [];
+  const tagsMatch = raw.match(/(?:Tags?|Tag)[:\s]+([^\n]{5,})/i);
+  if (tagsMatch) {
+    tags = tagsMatch[1].split(/[,\n]/).map(t => t.replace(/['"☐\[\]]/g,'').trim()).filter(t => t.length > 2 && t.length < 40).slice(0,13);
+  }
+
+  // Extract niche/product
+  const nicheMatch = raw.match(/(?:HÔM NAY LÀM|LOẠI|niche)[:\s]+([^\n]{3,60})/i);
+  const niche = nicheMatch ? nicheMatch[1].trim() : '';
+
+  return {
+    quotes: quotes.slice(0, 20),
+    bonus_quotes: [],
+    seo_title: seoTitle,
+    tags,
+    description: '',
+    niche,
+    _fromPlainText: true
+  };
+}
+
 /* ── PARSE BOT TAB ────────────────── */
 function dailyParseBot() {
   const raw = document.getElementById('daily-parse-input').value.trim();
-  if (!raw) return alert('Paste JSON vào trước!');
+  if (!raw) return alert('Paste nội dung vào trước!');
 
   let data;
+  // Try JSON first
   try {
     data = JSON.parse(raw.replace(/```json|```/g, '').trim());
   } catch (e) {
-    return alert('JSON không hợp lệ: ' + e.message);
+    // Fallback: parse plain text → extract quotes, tags, title
+    data = parsePlainTextToData(raw);
   }
 
   _parsedApproved = [];
