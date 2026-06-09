@@ -1142,6 +1142,7 @@ input[type=checkbox] {
 <!-- TOOL NAV -->
 <div class="tool-nav">
   <button class="tool-btn active" onclick="switchTool('daily',this)" style="display:flex;flex-direction:column;align-items:center;gap:2px"><span class="tool-icon">✨</span><span>Daily</span></button>
+  <button class="tool-btn" onclick="switchTool('flow',this)"><span class="tool-icon">📋</span><span style="font-size:12px">Flow</span></button>
   <button class="tool-btn" onclick="switchTool('niche',this)"><span class="tool-icon">🎯</span><span style="font-size:12px">Niche</span></button>
   <button class="tool-btn" onclick="switchTool('analyzer',this)"><span class="tool-icon">🔍</span><span style="font-size:12px">Analyzer</span></button>
   <button class="tool-btn" onclick="switchTool('bot',this)"><span class="tool-icon">🤖</span><span style="font-size:12px">Bot</span></button>
@@ -1150,7 +1151,6 @@ input[type=checkbox] {
   <button class="tool-btn" onclick="switchTool('mockup',this)"><span class="tool-icon">🖼</span><span style="font-size:12px">Mockup</span></button>
   <button class="tool-btn" onclick="switchTool('seo',this)"><span class="tool-icon">✦</span><span style="font-size:12px">SEO</span></button>
   <button class="tool-btn" onclick="switchTool('history',this)"><span class="tool-icon">📁</span><span style="font-size:12px">History</span></button>
-  <button class="tool-btn" onclick="switchTool('flow',this)"><span class="tool-icon">📋</span><span style="font-size:12px">Flow</span></button>
 </div>
 
 <!-- ══ TOOL A: POD ANALYZER ══ -->
@@ -2608,6 +2608,23 @@ function renderCSVPreview(){
     _csvData.slice(0,8).map(r=>`<div class="csv-row"><span>${r.quote}</span><span>${r.sub}</span><span>${r.vibe}</span><span>${r.product}</span></div>`).join('')+
     (_csvData.length>8?`<div style="color:var(--text3);font-size:10px;padding:4px 0">... và ${_csvData.length-8} dòng nữa</div>`:'');
   document.getElementById('csv-output').style.display='block';
+
+  // ── Next step: Mockup ──
+  const old = document.getElementById('csv-next-banner');
+  if (old) old.remove();
+  const b = document.createElement('div');
+  b.id = 'csv-next-banner';
+  b.style.cssText = 'margin-top:14px;padding:12px 14px;background:linear-gradient(135deg,rgba(80,200,120,0.1),rgba(80,200,120,0.02));border:1px solid var(--lime);border-radius:8px';
+  b.innerHTML = `
+    <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px">QUOTES XONG → BƯỚC TIẾP</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Đã có quotes. Download CSV rồi qua Mockup để tạo preview design.</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="downloadGeneratedCSV()"
+        style="flex:1;padding:10px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--mono)">⬇ Download CSV</button>
+      <button onclick="smartGoTo('mockup','','','')"
+        style="flex:1;padding:10px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--mono)">🖼 Qua Mockup</button>
+    </div>`;
+  document.getElementById('csv-output').appendChild(b);
 }
 
 function downloadGeneratedCSV(){
@@ -3339,6 +3356,71 @@ function dailyCheckBrief() {
     dailyRenderBrief();
     document.getElementById('daily-brief-section').style.display = 'block';
     setTimeout(() => document.getElementById('daily-brief-section').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+    // ── Auto-push to downstream tabs so user never has to copy-paste ──
+    const d = _dailyData;
+    const firstQuote = _dailyApproved[0]?.text || '';
+    const etsy = d.etsy || {};
+
+    // Push to SEO tab
+    setTimeout(() => {
+      const qEl = document.getElementById('quote');
+      const colEl = document.getElementById('color');
+      if (qEl && firstQuote && !qEl.value) {
+        qEl.value = firstQuote;
+        qEl.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      if (colEl && d.design?.colors && !colEl.value) {
+        colEl.value = (d.design.colors || []).map(c => c.label + ' ' + c.hex).join(', ');
+      }
+    }, 100);
+
+    // Push niche to all niche inputs
+    if (d.niche) {
+      ['p-niche','bot-niche','niche'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.value) el.value = d.niche;
+      });
+    }
+
+    // Push to Design (AI Prompter)
+    setTimeout(() => {
+      const pdEl = document.getElementById('prompt-desc');
+      if (pdEl && !pdEl.value && d.niche) {
+        pdEl.value = `${d.niche} — ${d.design?.layout || 'minimal aesthetic bookmark'}`;
+        pdEl.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }, 100);
+
+    // Push to CSV
+    setTimeout(() => {
+      const csvEl = document.getElementById('csv-custom');
+      if (csvEl && !csvEl.value && d.niche) {
+        csvEl.value = d.niche;
+        csvEl.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      const nicheEl = document.getElementById('niche');
+      if (nicheEl && !nicheEl.value && d.niche) nicheEl.value = d.niche;
+    }, 100);
+
+    // Show a sticky "Continue →" banner the first time
+    if (_dailyApproved.length === 1) {
+      const old = document.getElementById('daily-continue-banner');
+      if (old) old.remove();
+      const banner = document.createElement('div');
+      banner.id = 'daily-continue-banner';
+      banner.style.cssText = 'margin-top:14px;padding:12px 14px;background:linear-gradient(135deg,rgba(80,200,120,0.1),rgba(80,200,120,0.02));border:1px solid var(--lime);border-radius:8px';
+      banner.innerHTML = `
+        <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px">DATA ĐÃ ĐƯỢC ĐIỀN SẴN</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Quote, niche, màu sắc đã được tự động đưa vào SEO, Design, CSV tab. Chỉ cần qua tab và nhấn Generate.</div>
+        <div style="display:flex;gap:8px">
+          <button onclick="smartGoTo('seo','quote',\`${firstQuote.replace(/`/g,"'")}\`,'single')"
+            style="flex:1;padding:10px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--mono)">✦ Qua SEO</button>
+          <button onclick="smartGoTo('design','prompt-desc',\`${(d.niche||'').replace(/`/g,"'")}\`,'dt-aiprompter')"
+            style="flex:1;padding:10px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--mono)">🛠 Qua Design</button>
+        </div>`;
+      document.getElementById('daily-brief-section').appendChild(banner);
+    }
   } else {
     document.getElementById('daily-brief-section').style.display = 'none';
   }
@@ -3493,6 +3575,42 @@ function dailyParseBot() {
     (desc ? dailyCopyBox('Description', desc, 'parsed-copy-desc') : '');
 
   document.getElementById('daily-parse-output').style.display = 'block';
+
+  // ── Smart Next Step banner ──
+  const firstQuote = quotes.length ? (quotes[0].quote || quotes[0].text || '') : '';
+  const hasDesignSignal = (seoTitle + (tags||[]).join(' ')).match(/design|prompt|artwork|mockup/i);
+
+  let nextTool, nextFillId, nextFillValue, nextSubTab, nextIcon, nextLabel, nextReason;
+  if (seoTitle) {
+    nextTool = 'seo'; nextFillId = 'quote'; nextFillValue = firstQuote || seoTitle;
+    nextSubTab = 'single'; nextIcon = '✦'; nextLabel = 'Qua SEO → Tạo Listing';
+    nextReason = `Có SEO title rồi — điền quote vào SEO Generator để tạo listing hoàn chỉnh.`;
+  } else if (firstQuote) {
+    nextTool = 'seo'; nextFillId = 'quote'; nextFillValue = firstQuote;
+    nextSubTab = 'single'; nextIcon = '✦'; nextLabel = 'Qua SEO → Dùng Quote này';
+    nextReason = `Có quote "${firstQuote.slice(0,40)}..." — đưa vào SEO để tạo listing.`;
+  } else {
+    nextTool = 'niche'; nextFillId = 'p-niche'; nextFillValue = (tags[0]||'');
+    nextSubTab = ''; nextIcon = '🎯'; nextLabel = 'Qua Niche → Research thêm';
+    nextReason = `Chưa có quote rõ — research niche trước.`;
+  }
+
+  // Remove old banner if exists
+  const oldBanner = document.getElementById('daily-parse-next');
+  if (oldBanner) oldBanner.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'daily-parse-next';
+  banner.style.cssText = 'margin-top:14px;padding:12px 14px;background:linear-gradient(135deg,rgba(80,200,120,0.1),rgba(80,200,120,0.03));border:1px solid var(--lime);border-radius:8px';
+  banner.innerHTML = `
+    <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px">BƯỚC TIẾP THEO</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">${nextReason}</div>
+    <button onclick="smartGoTo('${nextTool}','${nextFillId}',\`${nextFillValue.replace(/`/g,"'")}\`,'${nextSubTab}')"
+      style="display:block;width:100%;padding:12px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--mono)">
+      ${nextIcon} ${nextLabel}
+    </button>`;
+  document.getElementById('daily-parse-output').appendChild(banner);
+
   document.getElementById('daily-parse-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3720,7 +3838,6 @@ Return ONLY valid JSON (no markdown):
 function renderSingleResults(data, quote) {
   const container = document.getElementById('resultsSingle');
   container.innerHTML = '';
-
   // A/B Titles block
   const titlesBlock = document.createElement('div');
   titlesBlock.className = 'result-block';
@@ -3772,6 +3889,16 @@ function renderSingleResults(data, quote) {
   // Price + SEO tip
   renderTextBlock(container, 'Price Suggestion', data.price, null);
   renderTextBlock(container, 'SEO Tip', data.seo_tip, null);
+
+  // ── Next step: Mockup ──
+  const nextBanner = document.createElement('div');
+  nextBanner.style.cssText = 'margin-top:16px;padding:12px 14px;background:linear-gradient(135deg,rgba(80,200,120,0.1),rgba(80,200,120,0.02));border:1px solid var(--lime);border-radius:8px';
+  nextBanner.innerHTML = `
+    <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px">LISTING XONG → BƯỚC TIẾP</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Listing đã tạo xong. Upload design lên Mockup để có preview trước khi đăng Etsy.</div>
+    <button onclick="smartGoTo('mockup','','','')"
+      style="display:block;width:100%;padding:12px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--mono)">🖼 Qua Mockup → Tạo Preview</button>`;
+  container.appendChild(nextBanner);
 }
 
 function renderTextBlock(container, label, text, maxLen) {
@@ -4300,114 +4427,200 @@ function smartParse() {
 
   // Smart detect next step
   const route = smartDetectRoute(raw);
-  out += `<div style="margin-top:16px;padding:14px;background:linear-gradient(135deg,rgba(80,200,120,0.08),rgba(80,200,120,0.02));border:1px solid var(--lime);border-radius:8px">
-    <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px">BƯỚC TIẾP THEO</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">${route.reason}</div>
-    <button onclick="smartGoTo('${route.tool}',${route.tabIdx},'${route.fillId}',\`${route.fillValue.replace(/`/g,'\\`')}\`)" style="display:block;width:100%;padding:12px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--mono);letter-spacing:.03em">${route.icon} ${route.label}</button>
-  </div>
-  <div style="display:flex;gap:6px;margin-top:8px">
-    <button class="btn-sm" style="flex:1;font-size:11px;background:var(--bg3);border:0.5px solid var(--border)" onclick="smartCopyChecklist()">⎘ Copy checklist</button>
-    <button class="btn-sm" style="font-size:11px;background:var(--bg3);border:0.5px solid var(--border)" onclick="document.getElementById('flow-smart-input').value='';document.getElementById('flow-smart-result').style.display='none'">↺ Reset</button>
-  </div>`;
+  const action = smartBuildActionPanel(raw, route);
+  out += action;
 
   const el = document.getElementById('flow-smart-result');
   el.innerHTML = out;
   el.style.display = 'block';
 }
 
+// Tab name → querySelector map (matches actual HTML order)
+const TOOL_BTN_MAP = {
+  daily:0, flow:1, niche:2, analyzer:3, bot:4, design:5, csv:6, mockup:7, seo:8, history:9
+};
+
+function smartBuildActionPanel(raw, route) {
+  const t = raw.toLowerCase();
+
+  // ── Extract price signals ──
+  const priceMatch = raw.match(/\$(\d[\d,.]+)/g) || [];
+  const prices = priceMatch.map(p => p.replace(/,/g,'')).filter((v,i,a)=>a.indexOf(v)===i).slice(0,3);
+
+  // ── Extract platform signals ──
+  const platforms = [];
+  if (/etsy/i.test(t))       platforms.push({ name:'Etsy', icon:'🛒', color:'#f1641e', url:'https://www.etsy.com/sell', note: prices[0] ? `Giá đề xuất: ${prices[0]}` : 'Phù hợp printable, journal, POD' });
+  if (/gumroad/i.test(t))    platforms.push({ name:'Gumroad', icon:'🟣', color:'#ff90e8', url:'https://gumroad.com/dashboard', note: prices[0] ? `Giá đề xuất: ${prices[0]}` : 'Tốt cho bundle digital, PDF' });
+  if (/teepublic/i.test(t))  platforms.push({ name:'TeePublic', icon:'👕', color:'#38a169', url:'https://www.teepublic.com/user-account/designs', note:'Upload PNG → tự set giá, base ~$14' });
+  if (/redbubble/i.test(t))  platforms.push({ name:'Redbubble', icon:'🔴', color:'#e74c3c', url:'https://www.redbubble.com/portfolio/manage_works', note:'Upload → bán poster, sticker, áo tự động' });
+  if (/ko.?fi/i.test(t))     platforms.push({ name:'Ko-fi', icon:'☕', color:'#ff5e5b', url:'https://ko-fi.com/account/shops', note:'Free shop, 0% fee, phù hợp bundle' });
+  if (/pinterest/i.test(t))  platforms.push({ name:'Pinterest', icon:'📌', color:'#e60023', url:'https://www.pinterest.com/pin-builder/', note:'Pin mockup → traffic free lâu dài' });
+  if (/tiktok/i.test(t))     platforms.push({ name:'TikTok', icon:'🎵', color:'#69c9d0', url:'https://www.tiktok.com/creator-center', note:'Quay 60s process video → viral organic' });
+  if (/canva/i.test(t))      platforms.push({ name:'Canva', icon:'🎨', color:'#7d2ae8', url:'https://www.canva.com/', note:'Tạo design, mockup, social post' });
+  if (/figma/i.test(t))      platforms.push({ name:'Figma', icon:'✏️', color:'#f24e1e', url:'https://www.figma.com/', note:'Layout printable, PDF export chuẩn' });
+  if (/firefly/i.test(t))    platforms.push({ name:'Adobe Firefly', icon:'🔥', color:'#ff6320', url:'https://firefly.adobe.com/', note:'Generate icon, texture, art → export PNG' });
+
+  // ── Extract time estimate ──
+  const timeMatch = raw.match(/(\d+)\s*(?:giờ|hours?|hrs?)/i);
+  const timeStr = timeMatch ? `${timeMatch[1]} giờ` : null;
+
+  // ── Extract product name ──
+  const productMatch = raw.match(/HÔM NAY LÀM[:\s]+([^\n]+)/i) || raw.match(/DESIGN[:\s#\d]+[:\s]+([^\n]{5,50})/i);
+  const productName = productMatch ? productMatch[1].trim().slice(0,60) : '';
+
+  // ── Extract expected revenue ──
+  const revenueMatch = raw.match(/\$[\d,]+[\s\-–]+\$[\d,]+/g);
+  const revenue = revenueMatch ? revenueMatch[0] : null;
+
+  // ── Build HTML ──
+  let html = `<div style="margin-top:16px;border-radius:10px;overflow:hidden;border:1px solid var(--lime)">`;
+
+  // Header
+  html += `<div style="padding:12px 14px;background:var(--lime);color:#000">
+    <div style="font-size:11px;font-weight:800;font-family:var(--mono);letter-spacing:.1em">WHAT YOU SHOULD DO NOW</div>
+    ${productName ? `<div style="font-size:13px;font-weight:600;margin-top:2px;opacity:.8">${productName}</div>` : ''}
+  </div>`;
+
+  // Stats row
+  if (timeStr || revenue || prices.length) {
+    html += `<div style="display:flex;gap:0;border-bottom:1px solid var(--border)">`;
+    if (timeStr) html += `<div style="flex:1;padding:10px 12px;border-right:1px solid var(--border)"><div style="font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.08em">⏱ CẦN</div><div style="font-size:14px;font-weight:700;color:var(--text);margin-top:2px">${timeStr}</div></div>`;
+    if (prices[0]) html += `<div style="flex:1;padding:10px 12px;border-right:1px solid var(--border)"><div style="font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.08em">💰 GIÁ BÁN</div><div style="font-size:14px;font-weight:700;color:var(--lime);margin-top:2px">${prices[0]}</div></div>`;
+    if (revenue) html += `<div style="flex:1;padding:10px 12px"><div style="font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.08em">📈 DỰ KIẾN</div><div style="font-size:13px;font-weight:700;color:var(--text);margin-top:2px">${revenue}</div></div>`;
+    html += `</div>`;
+  }
+
+  // Where to post
+  if (platforms.length) {
+    html += `<div style="padding:12px 14px;border-bottom:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.08em;margin-bottom:10px">ĐĂNG Ở ĐÂU</div>`;
+    platforms.slice(0,6).forEach(p => {
+      html += `<a href="${p.url}" target="_blank" style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg3);border:0.5px solid var(--border);border-radius:6px;margin-bottom:6px;text-decoration:none;color:var(--text)">
+        <span style="font-size:18px;flex-shrink:0">${p.icon}</span>
+        <div style="min-width:0;flex:1">
+          <div style="font-size:13px;font-weight:700;color:${p.color}">${p.name}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:1px;word-break:break-word">${p.note}</div>
+        </div>
+        <span style="color:var(--text3);flex-shrink:0">↗</span>
+      </a>`;
+    });
+    html += `</div>`;
+  }
+
+  // Main CTA
+  html += `<div style="padding:12px 14px">
+    <button onclick="smartGoTo('${route.tool}','${route.fillId}',\`${route.fillValue.replace(/`/g,"'")}\`,'${route.subTab}')"
+      style="display:block;width:100%;padding:13px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--mono);letter-spacing:.03em;margin-bottom:8px">
+      ${route.icon} ${route.label} →
+    </button>
+    <div style="display:flex;gap:6px">
+      <button class="btn-sm" style="flex:1;font-size:11px;background:var(--bg3);border:0.5px solid var(--border)" onclick="smartCopyChecklist()">⎘ Copy checklist</button>
+      <button class="btn-sm" style="font-size:11px;background:var(--bg3);border:0.5px solid var(--border)" onclick="document.getElementById('flow-smart-input').value='';document.getElementById('flow-smart-result').style.display='none'">↺ Reset</button>
+    </div>
+  </div>`;
+
+  html += `</div>`;
+  return html;
+}
+
 function smartDetectRoute(raw) {
   const t = raw.toLowerCase();
 
-  // Detect signals in the text
-  const hasQuote    = /quote|slogan|text|câu|viết|chữ/.test(t);
-  const hasDesign   = /design|midjourney|firefly|canva|figma|prompt|mockup|visual|artwork|logo|image|hình/.test(t);
-  const hasMockup   = /mockup|frame|canvas|scene|preview|treo|wall art|print/.test(t);
-  const hasCSV      = /csv|bulk|hàng loạt|nhiều sản phẩm|export|spreadsheet/.test(t);
-  const hasSEO      = /listing|title|tag|keyword|etsy seo|description|mô tả|tiêu đề/.test(t);
-  const hasNiche    = /niche|trending|chủ đề|thị trường|market|aesthetic|cottagecore|dark academia|boho/.test(t);
-  const hasUpload   = /upload|đăng|publish|etsy|gumroad|ko-fi|platform/.test(t);
+  const hasDesign  = /design|midjourney|firefly|canva|figma|prompt|artwork|logo|image|hình|vẽ/.test(t);
+  const hasMockup  = /mockup|frame|canvas|scene|preview|treo|wall art|print/.test(t);
+  const hasCSV     = /csv|bulk|hàng loạt|nhiều sản phẩm|export|spreadsheet/.test(t);
+  const hasSEO     = /listing|title|tag|keyword|etsy seo|description|mô tả|tiêu đề/.test(t);
+  const hasNiche   = /niche|trending|chủ đề|thị trường|aesthetic|cottagecore|dark academia|boho|streetwear/.test(t);
+  const hasQuote   = /quote|slogan|câu|viết text|chữ/.test(t);
 
-  // Extract niche keyword from text (first noun-like phrase after niche signals)
+  // Extract niche keyword
   let nicheKw = '';
-  const nicheMatch = raw.match(/niche[:\s]+([^\n,\.]{3,40})/i) || raw.match(/aesthetic[:\s]+([^\n,\.]{3,30})/i) || raw.match(/(?:^|\n)[•\-]\s*([a-z][a-z\s]{5,35}(?:aesthetic|core|style|minimal|vintage|boho|dark))/im);
-  if (nicheMatch) nicheKw = nicheMatch[1].trim().replace(/[*_#]/g,'').slice(0,40);
+  const nm = raw.match(/niche[:\s]+([^\n,\.]{3,40})/i)
+          || raw.match(/aesthetic[:\s]+([^\n,\.]{3,30})/i)
+          || raw.match(/(?:^|\n)[•\-]\s*([a-zA-Z][a-zA-Z\s]{4,30}(?:aesthetic|core|style|minimal|vintage|boho|dark))/im);
+  if (nm) nicheKw = nm[1].trim().replace(/[*_#]/g,'').slice(0,40);
 
-  // Extract first quote/slogan if present
+  // Extract quote/slogan
   let quoteKw = '';
-  const quoteMatch = raw.match(/(?:quote|slogan|câu)[:\s]+"?([^"\n]{5,60})"?/i) || raw.match(/"([^"]{5,60})"/);
-  if (quoteMatch) quoteKw = quoteMatch[1].trim().slice(0,60);
+  const qm = raw.match(/(?:quote|slogan|câu)[:\s]+"?([^"\n]{5,60})"?/i) || raw.match(/"([^"]{5,60})"/);
+  if (qm) quoteKw = qm[1].trim().slice(0,60);
 
   // Extract design description
   let designKw = '';
-  const designMatch = raw.match(/(?:design|prompt|hình)[:\s]+([^\n]{5,60})/i);
-  if (designMatch) designKw = designMatch[1].trim().replace(/[*_#]/g,'').slice(0,60);
+  const dm = raw.match(/(?:design|prompt|hình)[:\s]+([^\n]{5,60})/i);
+  if (dm) designKw = dm[1].trim().replace(/[*_#]/g,'').slice(0,60);
 
-  // Priority routing logic
+  // Priority order: SEO > Design > Mockup > CSV > Niche > Bot
   if (hasSEO && quoteKw) return {
-    tool:'seo', tabIdx:7, fillId:'quote', fillValue: quoteKw,
-    icon:'✦', label:'Qua SEO → Tạo Listing',
-    reason:`Phát hiện quote/slogan — điền sẵn vào SEO Listing Generator.`
+    tool:'seo', fillId:'quote', fillValue:quoteKw, subTab:'single',
+    icon:'✦', label:'Qua SEO → Tạo Listing ngay',
+    reason:`Tìm thấy quote/slogan — điền sẵn vào SEO Listing Generator.`
   };
   if (hasDesign && !hasMockup) return {
-    tool:'design', tabIdx:4, fillId:'prompt-desc', fillValue: designKw || nicheKw,
+    tool:'design', fillId:'prompt-desc', fillValue:designKw||nicheKw, subTab:'dt-aiprompter',
     icon:'🛠', label:'Qua Tools → Tạo Design Prompt',
-    reason:`Phát hiện yêu cầu design — điền sẵn mô tả vào AI Prompter.`
+    reason:`Phát hiện yêu cầu design — điền sẵn vào AI Prompter.`
   };
   if (hasMockup) return {
-    tool:'mockup', tabIdx:6, fillId:'', fillValue:'',
+    tool:'mockup', fillId:'', fillValue:'', subTab:'',
     icon:'🖼', label:'Qua Mockup → Tạo Preview',
-    reason:`Phát hiện từ khóa mockup — chuyển sang tab Mockup.`
+    reason:`Phát hiện mockup — chuyển sang Mockup tab.`
   };
   if (hasCSV) return {
-    tool:'csv', tabIdx:5, fillId:'csv-custom', fillValue: nicheKw || designKw,
+    tool:'csv', fillId:'csv-custom', fillValue:nicheKw||designKw, subTab:'',
     icon:'📊', label:'Qua CSV → Bulk Quotes',
-    reason:`Phát hiện yêu cầu tạo nhiều quotes — điền sẵn vào CSV Generator.`
+    reason:`Phát hiện bulk/CSV — điền sẵn niche vào CSV Generator.`
   };
   if (hasNiche && nicheKw) return {
-    tool:'niche', tabIdx:1, fillId:'p-niche', fillValue: nicheKw,
+    tool:'niche', fillId:'p-niche', fillValue:nicheKw, subTab:'',
     icon:'🎯', label:'Qua Niche → Research',
-    reason:`Phát hiện niche "${nicheKw}" — điền sẵn vào Niche tab.`
+    reason:`Tìm thấy niche "${nicheKw}" — điền sẵn vào Niche tab.`
   };
-  if (hasUpload && hasSEO) return {
-    tool:'seo', tabIdx:7, fillId:'quote', fillValue: quoteKw,
-    icon:'✦', label:'Qua SEO → Tạo Listing để Upload',
-    reason:`Sắp upload — tạo listing SEO trước.`
-  };
-
-  // Fallback: bot for more analysis
   return {
-    tool:'bot', tabIdx:3, fillId:'bot-niche', fillValue: nicheKw,
+    tool:'bot', fillId:'bot-niche', fillValue:nicheKw, subTab:'',
     icon:'🤖', label:'Qua Bot → Phân tích thêm',
     reason:`Chưa detect được bước cụ thể — paste thêm vào Bot để phân tích sâu hơn.`
   };
 }
 
-function smartGoTo(tool, tabIdx, fillId, fillValue) {
-  // Switch to the target tool tab
+function smartGoTo(tool, fillId, fillValue, subTab) {
+  // 1. Switch main tab — find the correct button by tool name
+  const idx = TOOL_BTN_MAP[tool] ?? -1;
   const btns = document.querySelectorAll('.tool-btn');
-  if (btns[tabIdx]) switchTool(tool, btns[tabIdx]);
+  if (idx >= 0 && btns[idx]) switchTool(tool, btns[idx]);
 
-  // Fill in the relevant input after a short delay (tab switch animation)
+  // 2. Open sub-tab if needed (SEO → single, Design → dt-aiprompter)
+  if (subTab) {
+    setTimeout(() => {
+      if (tool === 'seo') {
+        try { switchSEOTab('single'); } catch(e) {}
+      } else if (tool === 'design') {
+        const dtBtn = document.querySelector(`[onclick*="${subTab}"]`);
+        if (dtBtn) dtBtn.click();
+      }
+    }, 100);
+  }
+
+  // 3. Fill input after tab + sub-tab have opened
   if (fillId && fillValue) {
     setTimeout(() => {
       const el = document.getElementById(fillId);
-      if (el) {
-        el.value = fillValue;
-        el.dispatchEvent(new Event('input', {bubbles:true}));
-        // Visual highlight so user sees what was filled
-        el.style.transition = 'box-shadow 0.3s';
-        el.style.boxShadow = '0 0 0 2px var(--lime)';
-        el.focus();
-        setTimeout(() => { el.style.boxShadow = ''; }, 2000);
-      }
-      // Also sync sibling niche inputs
+      if (!el) return;
+      el.value = fillValue;
+      el.dispatchEvent(new Event('input', {bubbles:true}));
+      // Lime highlight so user sees what was prefilled
+      el.style.transition = 'box-shadow 0.4s';
+      el.style.boxShadow = '0 0 0 2px var(--lime)';
+      el.focus();
+      setTimeout(() => { el.style.boxShadow = ''; }, 2500);
+      // Sync all niche inputs if routing to niche
       if (fillId === 'p-niche') {
         ['bot-niche','daily-niche','niche'].forEach(id => {
           const e = document.getElementById(id);
           if (e && !e.value) e.value = fillValue;
         });
       }
-    }, 200);
+    }, 300);
   }
 }
 
@@ -4922,6 +5135,25 @@ Be honest. If the niche is saturated, say so. If data is missing, note it but st
     const text = data.content[0].text;
     nicheState.result = text;
     document.getElementById('niche-result-output').innerHTML = text.replace(/\n/g, '<br>');
+
+    // ── Next step: Bot for deep analysis OR SEO if ready ──
+    const old = document.getElementById('niche-next-banner');
+    if (old) old.remove();
+    const b = document.createElement('div');
+    b.id = 'niche-next-banner';
+    b.style.cssText = 'margin-top:16px;padding:12px 14px;background:linear-gradient(135deg,rgba(80,200,120,0.1),rgba(80,200,120,0.02));border:1px solid var(--lime);border-radius:8px';
+    const kw = nicheState.keyword || '';
+    b.innerHTML = `
+      <div style="font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px">RESEARCH XONG → BƯỚC TIẾP</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Niche đã analyze xong. Dùng Bot để generate quotes + design brief, hoặc qua SEO nếu đã có sẵn quote.</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="smartGoTo('bot','bot-niche',\`${kw.replace(/`/g,"'")}\`,'')"
+          style="flex:1;padding:10px;background:var(--lime);color:#000;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--mono)">🤖 Qua Bot → Generate</button>
+        <button onclick="smartGoTo('seo','quote','','')"
+          style="flex:1;padding:10px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--mono)">✦ Qua SEO</button>
+      </div>`;
+    document.getElementById('niche-result-output').parentElement.appendChild(b);
+
     switchNicheStep('result', document.querySelectorAll('#niche-steps .step-btn')[4]);
     loadNicheHistory();
   } catch(e) {
