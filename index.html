@@ -1583,8 +1583,7 @@ async function callGroqText(body) {
   const messages = (body.messages || []).map(m => ({
     role: m.role,
     content: Array.isArray(m.content)
-      ? m.content.filter(c => c.type === 'text').map(c => c.text).join('
-')
+      ? m.content.filter(c => c.type === 'text').map(c => c.text).join('\n')
       : m.content
   }));
   const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
